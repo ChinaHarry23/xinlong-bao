@@ -1,0 +1,24 @@
+{
+  "name": "xinlong-bao",
+  "version": "0.1.0",
+  "private": true,
+  "scripts": {
+    "dev": "next dev --port 3333",
+    "build": "next build",
+    "build:pages": "GITHUB_PAGES=true next build",
+    "start": "next start --port 3333"
+  },
+  "dependencies": {
+    "next": "^15.5.2",
+    "react": "^19.1.1",
+    "react-dom": "^19.1.1"
+  },
+  "devDependencies": {
+    "@tailwindcss/postcss": "^4.1.12",
+    "@types/node": "^24.3.0",
+    "@types/react": "^19.1.12",
+    "@types/react-dom": "^19.1.9",
+    "tailwindcss": "^4.1.12",
+    "typescript": "^5.9.2"
+  }
+}

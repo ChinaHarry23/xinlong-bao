@@ -1,0 +1,338 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>Quant Atlas | Frontier-First Quant Study Site</title>
+    <meta
+      name="description"
+      content="An interactive, top-down study site for getting into quant from the frontier back to the foundations."
+    />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=IBM+Plex+Mono:wght@400;500;600&family=Manrope:wght@400;500;600;700;800&family=Syne:wght@500;700;800&display=swap"
+      rel="stylesheet"
+    />
+    <link rel="stylesheet" href="/demos/quant-atlas/styles.css" />
+  </head>
+  <body>
+    <div class="page-shell">
+      <div class="ambient ambient-a"></div>
+      <div class="ambient ambient-b"></div>
+      <div class="grid-overlay"></div>
+
+      <header class="hero">
+        <div class="hero-copy">
+          <p class="eyebrow">Frontier-first quant map</p>
+          <h1>Learn quant from the edge backward.</h1>
+          <p class="lede">
+            Start with what quant looks like in 2026: AI-native research loops,
+            fast data engines, simulation-first thinking, and desk-specific
+            workflows. Then work top-down into the math, market structure, and
+            rigor that make the tools actually useful.
+          </p>
+          <div class="hero-actions">
+            <button class="primary-button" data-jump="intro">
+              Start with frontier
+            </button>
+            <button class="ghost-button" data-jump="practice">
+              Open the lab
+            </button>
+          </div>
+          <div class="hero-metrics" id="hero-metrics"></div>
+        </div>
+
+        <aside class="hero-panel">
+          <div class="panel-chip">Closest “ChatGPT moment” for quant</div>
+          <h2 id="moment-title">AI-native research, not self-driving funds.</h2>
+          <p id="moment-summary">
+            The closest analog is the compression of the research loop: models
+            can now read, summarize, code, and stress-test ideas across filings,
+            news, transcripts, and data pipelines. Durable edge still comes from
+            microstructure, risk control, and skeptical validation.
+          </p>
+          <div class="panel-stats">
+            <div>
+              <span>Best default first track</span>
+              <strong id="best-track-label">Systematic Equities</strong>
+            </div>
+            <div>
+              <span>Primary mode</span>
+              <strong>Top-down learning</strong>
+            </div>
+          </div>
+        </aside>
+      </header>
+
+      <section class="control-bar">
+        <div class="track-block">
+          <div class="section-label">Pick your desk</div>
+          <div class="track-picker" id="track-picker">
+            <button class="track-button active" data-track="systematic">
+              Systematic equities
+            </button>
+            <button class="track-button" data-track="microstructure">
+              Market making / HFT
+            </button>
+            <button class="track-button" data-track="derivatives">
+              Vol / derivatives
+            </button>
+            <button class="track-button" data-track="crypto">
+              Crypto / on-chain
+            </button>
+          </div>
+        </div>
+        <div class="progress-card">
+          <div class="section-label">Your run state</div>
+          <div class="progress-copy">
+            <strong id="progress-copy">0 of 6 beginner modules completed</strong>
+            <span id="progress-subcopy">Progress is saved in this browser.</span>
+          </div>
+          <div class="progress-bar">
+            <span id="progress-fill"></span>
+          </div>
+        </div>
+      </section>
+
+      <nav class="stage-nav" aria-label="Study stages">
+        <button class="stage-button active" data-stage="intro">
+          Intro to quant
+        </button>
+        <button class="stage-button" data-stage="beginner">Beginner</button>
+        <button class="stage-button" data-stage="practice">
+          Practice / simulation
+        </button>
+        <button class="stage-button" data-stage="master">Master level</button>
+      </nav>
+
+      <main class="stage-stack">
+        <section class="stage active" data-stage="intro">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Stage 1</p>
+              <h2>Intro to quant now</h2>
+            </div>
+            <p class="section-note">
+              Learn the map before the calculus. You need a mental model of the
+              machine before learning every bolt.
+            </p>
+          </div>
+
+          <div class="intro-grid">
+            <article class="surface-card pull-quote">
+              <div class="section-label">Working thesis</div>
+              <h3 id="track-tagline"></h3>
+              <p id="track-summary"></p>
+              <div class="insight-strip">
+                <div>
+                  <span>Start here because</span>
+                  <strong id="track-rationale"></strong>
+                </div>
+                <div>
+                  <span>Primary danger</span>
+                  <strong id="track-danger"></strong>
+                </div>
+              </div>
+            </article>
+
+            <article class="surface-card what-is-quant">
+              <div class="section-label">What quant really is</div>
+              <ul class="signal-list">
+                <li>Turning uncertainty into repeatable decision rules.</li>
+                <li>Testing whether a pattern survives costs, slippage, and regime change.</li>
+                <li>Building portfolios and execution logic, not just predictions.</li>
+                <li>Using code and statistics to make market judgment scalable.</li>
+              </ul>
+            </article>
+          </div>
+
+          <section class="stack-board surface-card">
+            <div class="stack-header">
+              <div>
+                <div class="section-label">Bleeding-edge stack</div>
+                <h3>2026 quant stack, from fastest learning path to scalable infra</h3>
+              </div>
+              <p>
+                This is the modern open stack I would learn first unless you are
+                joining a latency-sensitive desk that already lives in C++ or q.
+              </p>
+            </div>
+            <div class="stack-grid" id="stack-grid"></div>
+          </section>
+
+          <section class="surface-card topdown-map">
+            <div class="section-label">Top-down path</div>
+            <div class="path-grid">
+              <article>
+                <span>1</span>
+                <h4>See the frontier</h4>
+                <p>Understand the current desk map, tooling, and AI workflow.</p>
+              </article>
+              <article>
+                <span>2</span>
+                <h4>Learn the failure modes</h4>
+                <p>Overfitting, leakage, slippage blindness, and fake Sharpe.</p>
+              </article>
+              <article>
+                <span>3</span>
+                <h4>Backfill the foundations</h4>
+                <p>Probability, statistics, optimization, time series, and market structure.</p>
+              </article>
+              <article>
+                <span>4</span>
+                <h4>Specialize by desk</h4>
+                <p>Choose equities, HFT, derivatives, or crypto once the map is real.</p>
+              </article>
+            </div>
+          </section>
+        </section>
+
+        <section class="stage" data-stage="beginner">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Stage 2</p>
+              <h2>Beginner</h2>
+            </div>
+            <p class="section-note">
+              These are the first six modules that matter, ordered for signal per hour.
+            </p>
+          </div>
+
+          <div class="beginner-layout">
+            <section class="module-grid" id="module-grid"></section>
+
+            <aside class="surface-card cadence-card">
+              <div class="section-label">Weekly cadence</div>
+              <h3 id="cadence-title"></h3>
+              <ul class="cadence-list" id="cadence-list"></ul>
+              <div class="cadence-footer">
+                <span>Rule</span>
+                <strong>Never trust a result you cannot explain in plain English.</strong>
+              </div>
+            </aside>
+          </div>
+        </section>
+
+        <section class="stage" data-stage="practice">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Stage 3</p>
+              <h2>Practice / simulation</h2>
+            </div>
+            <p class="section-note">
+              Move from consuming ideas to stressing them. Quant skill compounds once you can falsify yourself.
+            </p>
+          </div>
+
+          <div class="lab-layout">
+            <article class="surface-card quiz-card">
+              <div class="section-label">Quick diagnostic</div>
+              <h3>Can you think like a quant yet?</h3>
+              <form id="quiz-form" class="quiz-form"></form>
+              <div class="quiz-actions">
+                <button class="primary-button" id="grade-quiz" type="button">
+                  Grade quiz
+                </button>
+                <button class="ghost-button" id="reset-quiz" type="button">
+                  Reset
+                </button>
+              </div>
+              <div class="quiz-result" id="quiz-result"></div>
+            </article>
+
+            <article class="surface-card sim-card">
+              <div class="section-label">Edge vs friction lab</div>
+              <h3>Watch expectancy survive or die.</h3>
+              <p class="sim-copy">
+                This toy simulator is simplified on purpose. Its job is to teach
+                why hit rate, payoff asymmetry, turnover, and trading costs matter
+                more than a pretty backtest screenshot.
+              </p>
+
+              <div class="sim-controls">
+                <label>
+                  <span>Hit rate</span>
+                  <input id="hit-rate" type="range" min="45" max="65" value="54" />
+                  <strong id="hit-rate-value">54%</strong>
+                </label>
+                <label>
+                  <span>Average win</span>
+                  <input id="avg-win" type="range" min="4" max="18" value="10" />
+                  <strong id="avg-win-value">10 bps</strong>
+                </label>
+                <label>
+                  <span>Average loss</span>
+                  <input id="avg-loss" type="range" min="4" max="18" value="8" />
+                  <strong id="avg-loss-value">8 bps</strong>
+                </label>
+                <label>
+                  <span>Bets per day</span>
+                  <input id="bets-per-day" type="range" min="1" max="10" value="4" />
+                  <strong id="bets-per-day-value">4</strong>
+                </label>
+                <label>
+                  <span>Cost per trade</span>
+                  <input id="cost-bps" type="range" min="1" max="6" value="2" />
+                  <strong id="cost-bps-value">2 bps</strong>
+                </label>
+                <label>
+                  <span>Regime tilt</span>
+                  <input id="regime-tilt" type="range" min="-4" max="6" value="1" />
+                  <strong id="regime-tilt-value">+1 bp</strong>
+                </label>
+              </div>
+
+              <div class="sim-metrics" id="sim-metrics"></div>
+              <div class="chart-frame">
+                <canvas id="equity-chart" width="720" height="260"></canvas>
+              </div>
+            </article>
+          </div>
+
+          <section class="glossary-grid" id="glossary-grid"></section>
+        </section>
+
+        <section class="stage" data-stage="master">
+          <div class="section-heading">
+            <div>
+              <p class="eyebrow">Stage 4</p>
+              <h2>Master level</h2>
+            </div>
+            <p class="section-note">
+              Mastery means choosing the right game, the right infrastructure, and the right research standard.
+            </p>
+          </div>
+
+          <div class="master-layout">
+            <section class="surface-card desk-map-card">
+              <div class="section-label">Specialization map</div>
+              <h3 id="master-track-title"></h3>
+              <div class="desk-pillars" id="desk-pillars"></div>
+            </section>
+
+            <section class="surface-card frontier-card">
+              <div class="section-label">Frontier themes</div>
+              <div class="frontier-list" id="frontier-list"></div>
+            </section>
+          </div>
+
+          <section class="sources-card surface-card">
+            <div class="sources-header">
+              <div>
+                <div class="section-label">Primary docs + papers</div>
+                <h3>Where this frontier view comes from</h3>
+              </div>
+              <p>
+                The desk map here is an informed synthesis from official docs and recent papers, not a claim that one stack wins every desk.
+              </p>
+            </div>
+            <div class="sources-grid" id="sources-grid"></div>
+          </section>
+        </section>
+      </main>
+    </div>
+
+    <script src="/demos/quant-atlas/script.js"></script>
+  </body>
+</html>

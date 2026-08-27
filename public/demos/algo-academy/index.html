@@ -1,0 +1,1451 @@
+<!doctype html>
+<html lang="en">
+<head>
+<meta charset="utf-8" />
+<meta name="viewport" content="width=device-width, initial-scale=1" />
+<title>Algo Academy — Beginner to Mastery</title>
+<link rel="preconnect" href="https://fonts.googleapis.com" />
+<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700;800&family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+<script src="https://cdn.tailwindcss.com?plugins=typography"></script>
+<script>
+  tailwind.config = {
+    theme: {
+      extend: {
+        fontFamily: {
+          sans: ['Inter', 'ui-sans-serif', 'system-ui'],
+          mono: ['JetBrains Mono', 'ui-monospace']
+        },
+        colors: {
+          ink:   { 950:'#08090c', 900:'#0b0d12', 800:'#11141b', 700:'#171b26', 600:'#1f2430' },
+          brand: { 300:'#a5f3fc', 400:'#67e8f9', 500:'#22d3ee', 600:'#06b6d4', 700:'#0891b2' },
+          accent:{ 400:'#c084fc', 500:'#a855f7', 600:'#9333ea' },
+          lime:  { 400:'#bef264', 500:'#a3e635' }
+        }
+      }
+    }
+  }
+</script>
+<style>
+  html,body{background:#08090c;color:#e6e8ee;font-family:'Inter',ui-sans-serif,system-ui;}
+  ::selection{background:#22d3ee40;color:#fff;}
+  .glow{box-shadow:0 0 0 1px #22d3ee30, 0 12px 60px -20px #22d3ee40;}
+  .card{background:linear-gradient(180deg,#11141b 0%,#0b0d12 100%);border:1px solid #1f2430;border-radius:16px;}
+  .chip{display:inline-flex;align-items:center;gap:6px;padding:2px 8px;border-radius:999px;font-size:11px;font-weight:600;letter-spacing:.02em;}
+  .scrollbar::-webkit-scrollbar{width:8px;height:8px}
+  .scrollbar::-webkit-scrollbar-thumb{background:#1f2430;border-radius:8px}
+  .bar-anim{transition:height .25s ease, background .25s ease, transform .25s ease;}
+  .node-anim{transition:transform .3s ease, fill .3s ease, stroke .3s ease;}
+  .btn{display:inline-flex;align-items:center;gap:6px;padding:8px 14px;border-radius:10px;font-weight:600;font-size:13px;border:1px solid #1f2430;background:#11141b;color:#e6e8ee;cursor:pointer;user-select:none;transition:.15s;}
+  .btn:hover{border-color:#22d3ee80;color:#fff;background:#171b26;}
+  .btn-primary{background:linear-gradient(135deg,#06b6d4,#a855f7);border:none;color:#fff;}
+  .btn-primary:hover{filter:brightness(1.1);}
+  .btn[disabled]{opacity:.4;cursor:not-allowed;}
+  .kbd{font-family:'JetBrains Mono',monospace;font-size:11px;background:#171b26;border:1px solid #1f2430;border-radius:6px;padding:2px 6px;}
+  .grid-dots{background-image:radial-gradient(#ffffff0a 1px,transparent 1px);background-size:22px 22px;}
+  .dashed{background-image:linear-gradient(90deg,#22d3ee 50%,transparent 0);background-size:10px 1px;background-repeat:repeat-x;background-position:0 50%;height:1px;}
+  details>summary{list-style:none;cursor:pointer;}
+  details>summary::-webkit-details-marker{display:none;}
+  .code{font-family:'JetBrains Mono',monospace;font-size:12.5px;line-height:1.6;background:#08090c;border:1px solid #1f2430;border-radius:12px;padding:14px 16px;color:#d1d5db;overflow:auto;}
+  .code .kw{color:#c084fc;} .code .fn{color:#67e8f9;} .code .num{color:#bef264;} .code .str{color:#fcd34d;} .code .cm{color:#6b7280;font-style:italic;}
+  .fade-in{animation:fade .4s ease;}
+  @keyframes fade{from{opacity:0;transform:translateY(6px)}to{opacity:1;transform:none}}
+  .pulse{animation:pulse 1.6s ease-in-out infinite;}
+  @keyframes pulse{0%,100%{opacity:1}50%{opacity:.55}}
+</style>
+</head>
+<body class="antialiased">
+<div id="root"></div>
+
+<script type="importmap">
+{
+  "imports": {
+    "react": "https://esm.sh/react@19.0.0",
+    "react-dom/client": "https://esm.sh/react-dom@19.0.0/client",
+    "htm": "https://esm.sh/htm@3.1.1"
+  }
+}
+</script>
+
+<script type="module">
+import React, { useEffect, useMemo, useRef, useState, useCallback } from "react";
+import { createRoot } from "react-dom/client";
+import htm from "htm";
+const html = htm.bind(React.createElement);
+const { useReducer } = React;
+
+/* ============================================================= *
+ *   CURRICULUM — Beginner to Mastery roadmap
+ * ============================================================= */
+const CURRICULUM = [
+  {
+    level: "Beginner",
+    tag: "Foundations",
+    hue: "from-brand-500 to-brand-700",
+    topics: [
+      { id:"bigo",    title:"Big-O Notation",         blurb:"Measure how an algorithm scales." },
+      { id:"arrays",  title:"Arrays & Strings",       blurb:"Contiguous memory and index math." },
+      { id:"linked",  title:"Linked Lists",           blurb:"Nodes, pointers, and traversal." },
+      { id:"stacks",  title:"Stacks & Queues",        blurb:"LIFO and FIFO, the workhorses." },
+      { id:"hash",    title:"Hash Tables",            blurb:"O(1) lookups via hashing." },
+    ]
+  },
+  {
+    level: "Intermediate",
+    tag: "Core Algorithms",
+    hue: "from-accent-500 to-brand-600",
+    topics: [
+      { id:"binsearch", title:"Binary Search",         blurb:"Halve the search space each step." },
+      { id:"sorting",   title:"Sorting Algorithms",    blurb:"Bubble, insertion, merge, quick — visualized." },
+      { id:"recursion", title:"Recursion",             blurb:"Solve small, combine, repeat." },
+      { id:"trees",     title:"Trees & Traversal",     blurb:"Binary trees, BSTs, DFS orderings." },
+      { id:"bfsdfs",    title:"BFS & DFS",             blurb:"Explore graphs breadth vs depth first." },
+    ]
+  },
+  {
+    level: "Advanced",
+    tag: "Graphs & DP",
+    hue: "from-accent-600 to-brand-700",
+    topics: [
+      { id:"dijkstra", title:"Dijkstra Shortest Path", blurb:"Greedy relaxation with a priority queue." },
+      { id:"union",    title:"Union-Find",             blurb:"Disjoint sets for connectivity." },
+      { id:"dp",       title:"Dynamic Programming",    blurb:"Overlap + optimal substructure." },
+      { id:"greedy",   title:"Greedy Algorithms",      blurb:"Commit to local optima when it's safe." },
+      { id:"backtrack",title:"Backtracking",           blurb:"Explore, undo, repeat." },
+    ]
+  },
+  {
+    level: "Mastery",
+    tag: "Specialist",
+    hue: "from-lime-400 to-brand-500",
+    topics: [
+      { id:"segtree",  title:"Segment Trees",          blurb:"Range queries in O(log n)." },
+      { id:"kmp",      title:"String Matching (KMP)",  blurb:"Linear-time pattern search." },
+      { id:"mst",      title:"Minimum Spanning Trees", blurb:"Kruskal & Prim." },
+      { id:"flow",     title:"Max-Flow / Min-Cut",     blurb:"Ford–Fulkerson & Edmonds–Karp." },
+      { id:"np",       title:"NP & Approximation",     blurb:"When perfect isn't possible." },
+    ]
+  }
+];
+
+/* ============================================================= *
+ *   UTILITIES
+ * ============================================================= */
+const sleep = ms => new Promise(r => setTimeout(r, ms));
+const clamp = (x,a,b)=>Math.max(a,Math.min(b,x));
+const cx = (...xs) => xs.filter(Boolean).join(" ");
+const rand = (n=20, lo=5, hi=95) => Array.from({length:n},()=>Math.floor(Math.random()*(hi-lo))+lo);
+
+function useLocalState(key, initial){
+  const [s, setS] = useState(()=>{
+    try{ const v = localStorage.getItem(key); return v ? JSON.parse(v) : initial; }catch{ return initial; }
+  });
+  useEffect(()=>{ try{ localStorage.setItem(key, JSON.stringify(s)); }catch{} },[key,s]);
+  return [s, setS];
+}
+
+/* ============================================================= *
+ *   ICONS
+ * ============================================================= */
+const I = {
+  play:    html`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M8 5v14l11-7z"/></svg>`,
+  pause:   html`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 5h4v14H6zm8 0h4v14h-4z"/></svg>`,
+  reset:   html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M3 12a9 9 0 1 0 3-6.7"/><path d="M3 4v5h5"/></svg>`,
+  step:    html`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M6 4l10 8-10 8V4zM18 4h2v16h-2z"/></svg>`,
+  shuffle: html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><path d="M3 6h4l10 12h4"/><path d="M17 6h4v4"/><path d="M3 18h4"/><path d="M17 14l4 4-4 4"/></svg>`,
+  check:   html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M5 13l4 4 10-11"/></svg>`,
+  x:       html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="3"><path d="M6 6l12 12M18 6L6 18"/></svg>`,
+  spark:   html`<svg width="14" height="14" viewBox="0 0 24 24" fill="currentColor"><path d="M12 2l2 7 7 2-7 2-2 7-2-7-7-2 7-2z"/></svg>`,
+  lock:    html`<svg width="12" height="12" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2"><rect x="5" y="11" width="14" height="10" rx="2"/><path d="M8 11V8a4 4 0 1 1 8 0v3"/></svg>`,
+  arrow:   html`<svg width="14" height="14" viewBox="0 0 24 24" fill="none" stroke="currentColor" stroke-width="2.2"><path d="M5 12h14M13 5l7 7-7 7"/></svg>`,
+};
+
+/* ============================================================= *
+ *   SHARED UI
+ * ============================================================= */
+function Controls({ running, onPlay, onPause, onStep, onReset, onShuffle, speed, setSpeed, extra }){
+  return html`
+    <div class="flex flex-wrap items-center gap-2">
+      ${running
+        ? html`<button class="btn" onClick=${onPause}>${I.pause}<span>Pause</span></button>`
+        : html`<button class="btn btn-primary" onClick=${onPlay}>${I.play}<span>Play</span></button>`}
+      ${onStep && html`<button class="btn" onClick=${onStep} disabled=${running}>${I.step}<span>Step</span></button>`}
+      ${onReset && html`<button class="btn" onClick=${onReset}>${I.reset}<span>Reset</span></button>`}
+      ${onShuffle && html`<button class="btn" onClick=${onShuffle}>${I.shuffle}<span>Shuffle</span></button>`}
+      ${setSpeed && html`
+        <label class="flex items-center gap-2 text-xs text-gray-400 ml-1">
+          Speed
+          <input type="range" min="1" max="100" value=${speed} onInput=${e=>setSpeed(+e.target.value)} class="accent-brand-500 w-28"/>
+        </label>`}
+      ${extra}
+    </div>`;
+}
+
+function SectionHeader({ eyebrow, title, children }){
+  return html`
+    <div class="mb-5">
+      ${eyebrow && html`<div class="text-[11px] uppercase tracking-[0.18em] text-brand-400 font-semibold mb-2">${eyebrow}</div>`}
+      <h2 class="text-2xl md:text-3xl font-bold text-white leading-tight">${title}</h2>
+      ${children && html`<p class="text-gray-400 mt-2 text-[15px] leading-relaxed">${children}</p>`}
+    </div>`;
+}
+
+function Quiz({ question, choices, answerIndex, explain }){
+  const [picked, setPicked] = useState(null);
+  const correct = picked === answerIndex;
+  return html`
+    <div class="card p-5">
+      <div class="flex items-center gap-2 mb-3">
+        <span class="chip bg-accent-500/15 text-accent-400">${I.spark}<span>Check your understanding</span></span>
+      </div>
+      <div class="text-white font-semibold mb-4">${question}</div>
+      <div class="grid gap-2">
+        ${choices.map((c,i)=>{
+          const state = picked==null ? "idle" : i===answerIndex ? "right" : i===picked ? "wrong" : "dim";
+          const cls = {
+            idle:  "border-ink-600 hover:border-brand-500/70 hover:bg-ink-700",
+            right: "border-lime-400/70 bg-lime-400/10 text-white",
+            wrong: "border-red-500/70 bg-red-500/10 text-white",
+            dim:   "border-ink-700 text-gray-500"
+          }[state];
+          return html`<button key=${i} disabled=${picked!=null} onClick=${()=>setPicked(i)}
+            class=${cx("text-left text-sm border rounded-xl px-4 py-3 transition flex items-start gap-3", cls)}>
+            <span class="mt-0.5 w-5 h-5 shrink-0 rounded-md border border-current/40 flex items-center justify-center text-[11px] font-bold">${String.fromCharCode(65+i)}</span>
+            <span>${c}</span>
+          </button>`;
+        })}
+      </div>
+      ${picked!=null && html`<div class=${cx("mt-4 text-sm rounded-xl p-3", correct?"bg-lime-400/10 text-lime-400":"bg-red-500/10 text-red-300")}>
+        ${correct?"Correct.":"Not quite."} ${explain}
+      </div>`}
+    </div>`;
+}
+
+/* ============================================================= *
+ *   GENERATOR-DRIVEN ANIMATION LOOP
+ * ============================================================= */
+function useAlgoRunner(stepFn, deps=[], {speed=50}={}){
+  // stepFn: generator factory () => Generator
+  const [running, setRunning] = useState(false);
+  const [, force] = useReducer(x=>x+1, 0);
+  const genRef = useRef(null);
+  const doneRef = useRef(false);
+  const speedRef = useRef(speed);
+  speedRef.current = speed;
+  // Keep latest stepFn in a ref so generators always read current state (walls, start, goal, etc.)
+  const stepFnRef = useRef(stepFn);
+  stepFnRef.current = stepFn;
+
+  const ensureGen = () => {
+    if (!genRef.current) { genRef.current = stepFnRef.current(); doneRef.current = false; }
+  };
+  const reset = useCallback(()=>{
+    genRef.current = null; doneRef.current = false; setRunning(false); force();
+  },[]);
+  useEffect(()=>{ reset(); },deps); // eslint-disable-line
+
+  const step = useCallback(()=>{
+    ensureGen();
+    if (doneRef.current) return false;
+    const { done } = genRef.current.next();
+    if (done) doneRef.current = true;
+    force();
+    return !done;
+  },[]);
+
+  useEffect(()=>{
+    if (!running) return;
+    let stop=false;
+    (async()=>{
+      while(!stop){
+        const cont = step();
+        if (!cont){ setRunning(false); break; }
+        const ms = Math.max(4, 600 - speedRef.current*5.8);
+        await sleep(ms);
+      }
+    })();
+    return ()=>{ stop=true; };
+  },[running, step]);
+
+  return { running, setRunning, step, reset };
+}
+
+/* ============================================================= *
+ *   LESSON: BIG-O
+ * ============================================================= */
+function LessonBigO(){
+  const [n, setN] = useState(20);
+  const [scale, setScale] = useState("log"); // "log" | "linear"
+  // f = direct value (used in linear mode, may overflow for huge n)
+  // logF = log10(f(n)) computed directly from the formula → no overflow
+  const funcs = [
+    { key:"1",     label:"O(1)",      color:"#bef264", f:n=>1,                        logF:n=>0 },
+    { key:"logn",  label:"O(log n)",  color:"#22d3ee", f:n=>Math.log2(Math.max(2,n)), logF:n=>Math.log10(Math.log2(Math.max(2,n))) },
+    { key:"sqrtn", label:"O(√n)",     color:"#34d399", f:n=>Math.sqrt(n),             logF:n=>0.5*Math.log10(Math.max(1,n)) },
+    { key:"n",     label:"O(n)",      color:"#a5f3fc", f:n=>n,                        logF:n=>Math.log10(Math.max(1,n)) },
+    { key:"nlogn", label:"O(n log n)",color:"#c084fc", f:n=>n*Math.log2(Math.max(2,n)), logF:n=>Math.log10(Math.max(1,n)) + Math.log10(Math.log2(Math.max(2,n))) },
+    { key:"n2",    label:"O(n²)",     color:"#f472b6", f:n=>n*n,                      logF:n=>2*Math.log10(Math.max(1,n)) },
+    { key:"2n",    label:"O(2ⁿ)",     color:"#ef4444", f:n=>Math.pow(2,n),            logF:n=>n*Math.log10(2) },
+  ];
+  const W=520,H=240,PAD=28;
+
+  // Pick a sensible y-axis ceiling per scale.
+  // LINEAR: cap at a reasonable visual ceiling (n²) so the chart looks like the classic "fan",
+  //   and let O(2ⁿ) shoot off the top — that's the whole point of the picture.
+  // LOG:    use the true max of all logFs so every curve is visible.
+  const linearCeiling = Math.max(n*n, 16);
+  const logMax = Math.max(...funcs.map(fn=>fn.logF(n)), 1);
+  const project = (i, fn) => {
+    if (scale === "log") return fn.logF(i) / logMax;
+    return Math.min(1, fn.f(i) / linearCeiling);
+  };
+  const toY = (i, fn) => H-PAD - project(i, fn) * (H-PAD*2);
+  const toX = i => PAD + (i/Math.max(1,n))*(W-PAD*2);
+
+  return html`
+    <div class="grid lg:grid-cols-2 gap-6">
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-3 gap-3 flex-wrap">
+          <div class="text-sm text-gray-400">Growth rates at <span class="font-mono text-white">n = ${n}</span></div>
+          <div class="flex items-center gap-2">
+            <div class="inline-flex rounded-lg border border-ink-600 overflow-hidden text-xs">
+              <button class=${cx("px-2.5 py-1", scale==="log"?"bg-brand-500/20 text-brand-300":"text-gray-400 hover:text-white")} onClick=${()=>setScale("log")}>log</button>
+              <button class=${cx("px-2.5 py-1", scale==="linear"?"bg-brand-500/20 text-brand-300":"text-gray-400 hover:text-white")} onClick=${()=>setScale("linear")}>linear</button>
+            </div>
+            <input type="range" min="1" max="60" value=${n} onInput=${e=>setN(+e.target.value)} class="accent-brand-500 w-40"/>
+          </div>
+        </div>
+        <svg viewBox=${`0 0 ${W} ${H}`} class="w-full">
+          <defs>
+            <linearGradient id="gradBG" x1="0" x2="0" y1="0" y2="1">
+              <stop offset="0" stop-color="#22d3ee" stop-opacity=".06"/>
+              <stop offset="1" stop-color="#22d3ee" stop-opacity="0"/>
+            </linearGradient>
+          </defs>
+          <rect x="0" y="0" width=${W} height=${H} fill="url(#gradBG)"/>
+          ${[0,.25,.5,.75,1].map(t => html`<line key=${t} x1=${PAD} x2=${W-PAD} y1=${PAD + t*(H-PAD*2)} y2=${PAD + t*(H-PAD*2)} stroke="#1f2430" stroke-dasharray="2 4"/>`)}
+          <line x1=${PAD} x2=${PAD} y1=${PAD} y2=${H-PAD} stroke="#2a3040"/>
+          <line x1=${PAD} x2=${W-PAD} y1=${H-PAD} y2=${H-PAD} stroke="#2a3040"/>
+          ${funcs.map(fn => {
+            // Sample many points so smooth curves stay smooth even at large n
+            const samples = 120;
+            const pts = [];
+            for (let s=0; s<=samples; s++){
+              const i = (s/samples) * n;
+              if (i < 1) continue;
+              pts.push(`${toX(i)},${toY(i, fn)}`);
+            }
+            return html`<polyline key=${fn.key} fill="none" stroke=${fn.color} stroke-width="2" points=${pts.join(" ")} opacity=".95" stroke-linejoin="round" stroke-linecap="round"/>`;
+          })}
+          <text x=${PAD} y=${PAD-8} fill="#6b7280" font-size="10" font-family="JetBrains Mono">${scale==="log"?"log(ops) →":"ops →"}</text>
+          <text x=${W-PAD-10} y=${H-8} fill="#6b7280" font-size="10" font-family="JetBrains Mono" text-anchor="end">n →</text>
+        </svg>
+        <div class="flex flex-wrap gap-2 mt-3">
+          ${funcs.map(fn=>html`<span key=${fn.key} class="chip" style=${{background:fn.color+"20",color:fn.color}}><span style=${{width:8,height:8,background:fn.color,borderRadius:999}}></span>${fn.label}</span>`)}
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="card p-5">
+          <div class="chip bg-brand-500/15 text-brand-400 mb-3">Intuition</div>
+          <p class="text-gray-300 leading-relaxed text-[15px]">
+            Big-O describes how work grows with input size <span class="font-mono text-white">n</span>.
+            It ignores constants and lower-order terms so you can compare algorithms independent of hardware.
+            A rule of thumb: double <span class="font-mono text-white">n</span> and ask "how much more work did I do?"
+          </p>
+          <div class="grid grid-cols-2 gap-2 mt-4 text-xs font-mono">
+            <div class="rounded-lg border border-ink-600 p-3"><div class="text-brand-400">O(1)</div> Array index</div>
+            <div class="rounded-lg border border-ink-600 p-3"><div class="text-brand-400">O(log n)</div> Binary search</div>
+            <div class="rounded-lg border border-ink-600 p-3"><div class="text-brand-400">O(n log n)</div> Mergesort</div>
+            <div class="rounded-lg border border-ink-600 p-3"><div class="text-brand-400">O(n²)</div> Naive pair check</div>
+          </div>
+        </div>
+        <${Quiz}
+          question="Which dominates for large n: O(n²) or O(n log n)?"
+          choices=${["O(n log n) grows faster","O(n²) grows faster","They're the same","Depends on constants"]}
+          answerIndex=${1}
+          explain="For large n, n² dwarfs n·log n — we drop constants, not asymptotics."/>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: SORTING (bubble / insertion / selection / merge / quick)
+ * ============================================================= */
+function LessonSorting(){
+  const ALGOS = ["Bubble","Insertion","Selection","Merge","Quick"];
+  const [algo, setAlgo] = useState("Bubble");
+  const [size, setSize] = useState(24);
+  const [speed, setSpeed] = useState(70);
+  const [arr, setArr] = useState(()=>rand(24));
+  const [state, setState] = useState({ cmp:[], act:[], done:new Set(), pivot:-1, stats:{comparisons:0,swaps:0} });
+
+  useEffect(()=>{ setArr(rand(size)); },[size]);
+
+  function* genBubble(a){
+    const n=a.length; const st={cmp:[],act:[],done:new Set(),pivot:-1,stats:{comparisons:0,swaps:0}};
+    for (let i=0;i<n;i++){
+      for (let j=0;j<n-i-1;j++){
+        st.cmp=[j,j+1]; st.stats.comparisons++; setArr([...a]); setState({...st,stats:{...st.stats}}); yield;
+        if (a[j]>a[j+1]){ [a[j],a[j+1]]=[a[j+1],a[j]]; st.stats.swaps++; st.act=[j,j+1]; setArr([...a]); setState({...st,stats:{...st.stats}}); yield; }
+      }
+      st.done.add(n-i-1); setState({...st,done:new Set(st.done)}); yield;
+    }
+    st.cmp=[]; st.act=[]; for(let k=0;k<n;k++)st.done.add(k); setState({...st,done:new Set(st.done)});
+  }
+  function* genInsertion(a){
+    const n=a.length; const st={cmp:[],act:[],done:new Set(),pivot:-1,stats:{comparisons:0,swaps:0}};
+    st.done.add(0);
+    for (let i=1;i<n;i++){
+      let j=i;
+      while (j>0){
+        st.cmp=[j-1,j]; st.stats.comparisons++; setState({...st,stats:{...st.stats}}); yield;
+        if (a[j-1]>a[j]){ [a[j-1],a[j]]=[a[j],a[j-1]]; st.stats.swaps++; st.act=[j-1,j]; setArr([...a]); yield; }
+        else break;
+        j--;
+      }
+      st.done.add(i); setState({...st,done:new Set(st.done)}); yield;
+    }
+  }
+  function* genSelection(a){
+    const n=a.length; const st={cmp:[],act:[],done:new Set(),pivot:-1,stats:{comparisons:0,swaps:0}};
+    for (let i=0;i<n;i++){
+      let min=i; st.pivot=i;
+      for (let j=i+1;j<n;j++){
+        st.cmp=[min,j]; st.stats.comparisons++; setState({...st,stats:{...st.stats}}); yield;
+        if (a[j]<a[min]){ min=j; st.pivot=min; yield; }
+      }
+      if (min!==i){ [a[i],a[min]]=[a[min],a[i]]; st.stats.swaps++; st.act=[i,min]; setArr([...a]); yield; }
+      st.done.add(i); setState({...st,done:new Set(st.done),pivot:-1}); yield;
+    }
+  }
+  function* genMerge(a){
+    const st={cmp:[],act:[],done:new Set(),pivot:-1,stats:{comparisons:0,swaps:0}};
+    function* merge(lo,mid,hi){
+      const L=a.slice(lo,mid+1), R=a.slice(mid+1,hi+1);
+      let i=0,j=0,k=lo;
+      while(i<L.length && j<R.length){
+        st.cmp=[lo+i, mid+1+j]; st.stats.comparisons++; setState({...st,stats:{...st.stats}}); yield;
+        if (L[i]<=R[j]) a[k++]=L[i++]; else a[k++]=R[j++];
+        st.act=[k-1]; setArr([...a]); yield;
+      }
+      while(i<L.length){ a[k++]=L[i++]; setArr([...a]); yield; }
+      while(j<R.length){ a[k++]=R[j++]; setArr([...a]); yield; }
+      for(let x=lo;x<=hi;x++) st.done.add(x); setState({...st,done:new Set(st.done)}); yield;
+    }
+    function* ms(lo,hi){
+      if (lo>=hi){ st.done.add(lo); return; }
+      const mid=(lo+hi)>>1;
+      yield* ms(lo,mid); yield* ms(mid+1,hi); yield* merge(lo,mid,hi);
+    }
+    yield* ms(0,a.length-1);
+  }
+  function* genQuick(a){
+    const st={cmp:[],act:[],done:new Set(),pivot:-1,stats:{comparisons:0,swaps:0}};
+    function* qs(lo,hi){
+      if (lo>=hi){ if (lo===hi) st.done.add(lo); setState({...st,done:new Set(st.done)}); return; }
+      const pivot=a[hi]; st.pivot=hi; let i=lo-1;
+      for (let j=lo;j<hi;j++){
+        st.cmp=[j,hi]; st.stats.comparisons++; setState({...st,stats:{...st.stats}}); yield;
+        if (a[j]<=pivot){ i++; [a[i],a[j]]=[a[j],a[i]]; st.stats.swaps++; st.act=[i,j]; setArr([...a]); yield; }
+      }
+      [a[i+1],a[hi]]=[a[hi],a[i+1]]; st.stats.swaps++; setArr([...a]); st.done.add(i+1); setState({...st,done:new Set(st.done),pivot:-1}); yield;
+      yield* qs(lo,i); yield* qs(i+2,hi);
+    }
+    yield* qs(0,a.length-1);
+  }
+
+  const factory = () => {
+    const a = arr.slice();
+    switch(algo){
+      case "Bubble":    return genBubble(a);
+      case "Insertion": return genInsertion(a);
+      case "Selection": return genSelection(a);
+      case "Merge":     return genMerge(a);
+      case "Quick":     return genQuick(a);
+    }
+  };
+  const runner = useAlgoRunner(factory, [algo, size], { speed });
+  // keep speed ref in sync
+  useEffect(()=>{}, [speed]);
+
+  const shuffle = () => { runner.reset(); setArr(rand(size)); setState({cmp:[],act:[],done:new Set(),pivot:-1,stats:{comparisons:0,swaps:0}}); };
+
+  const complexities = {
+    Bubble:    { avg:"O(n²)",     best:"O(n)",     space:"O(1)"   },
+    Insertion: { avg:"O(n²)",     best:"O(n)",     space:"O(1)"   },
+    Selection: { avg:"O(n²)",     best:"O(n²)",    space:"O(1)"   },
+    Merge:     { avg:"O(n log n)",best:"O(n log n)",space:"O(n)"  },
+    Quick:     { avg:"O(n log n)",best:"O(n log n)",space:"O(log n)"},
+  }[algo];
+  const maxV = Math.max(...arr, 1);
+
+  return html`
+    <div class="grid lg:grid-cols-[1fr_300px] gap-6 items-start">
+      <div class="card p-5">
+        <div class="flex flex-wrap items-center gap-2 mb-4">
+          ${ALGOS.map(a => html`<button key=${a} class=${cx("btn text-xs", a===algo && "border-brand-500 text-brand-300 bg-brand-500/10")} onClick=${()=>{setAlgo(a); runner.reset();}}>${a}</button>`)}
+        </div>
+
+        <div class="h-64 flex items-end gap-[3px] px-1 grid-dots rounded-xl p-2 bg-ink-900/70 border border-ink-600">
+          ${arr.map((v,i)=>{
+            let bg = "#22d3ee"; let op = 0.85;
+            if (state.done.has(i)) { bg="#bef264"; op=1; }
+            else if (state.pivot===i) { bg="#fcd34d"; }
+            else if (state.act.includes(i)) { bg="#f472b6"; }
+            else if (state.cmp.includes(i)) { bg="#c084fc"; }
+            return html`<div key=${i} class="bar-anim rounded-t" style=${{height:`${(v/maxV)*100}%`,flex:1,background:bg,opacity:op}} title=${v}></div>`;
+          })}
+        </div>
+
+        <div class="mt-4 flex flex-wrap items-center gap-2">
+          <${Controls} running=${runner.running}
+            onPlay=${()=>runner.setRunning(true)}
+            onPause=${()=>runner.setRunning(false)}
+            onStep=${()=>runner.step()}
+            onReset=${()=>{runner.reset(); setArr(arr.slice()); setState({cmp:[],act:[],done:new Set(),pivot:-1,stats:{comparisons:0,swaps:0}});}}
+            onShuffle=${shuffle}
+            speed=${speed} setSpeed=${setSpeed}
+            extra=${html`<label class="text-xs text-gray-400 flex items-center gap-2 ml-1">Size <input type="range" min="8" max="60" value=${size} onInput=${e=>setSize(+e.target.value)} class="accent-brand-500 w-28"/></label>`}/>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="card p-5">
+          <div class="text-xs uppercase tracking-wider text-gray-500 mb-2">${algo} Sort</div>
+          <dl class="grid grid-cols-2 gap-y-2 text-sm">
+            <dt class="text-gray-400">Average</dt><dd class="font-mono text-white text-right">${complexities.avg}</dd>
+            <dt class="text-gray-400">Best</dt>   <dd class="font-mono text-white text-right">${complexities.best}</dd>
+            <dt class="text-gray-400">Space</dt>  <dd class="font-mono text-white text-right">${complexities.space}</dd>
+          </dl>
+          <div class="dashed my-4"></div>
+          <dl class="grid grid-cols-2 gap-y-2 text-sm">
+            <dt class="text-gray-400">Comparisons</dt><dd class="font-mono text-brand-400 text-right">${state.stats.comparisons}</dd>
+            <dt class="text-gray-400">Swaps</dt>      <dd class="font-mono text-accent-400 text-right">${state.stats.swaps}</dd>
+          </dl>
+        </div>
+        <div class="card p-5 text-[13px] text-gray-300 leading-relaxed">
+          <div class="text-white font-semibold mb-1">Why it matters</div>
+          Sorting reveals the big tradeoffs of algorithm design: <span class="text-brand-400">time vs space</span>,
+          <span class="text-accent-400">divide-and-conquer</span> vs in-place swapping, and how
+          inputs (already-sorted, reversed, random) interact with worst-case behavior.
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: BINARY SEARCH
+ * ============================================================= */
+function LessonBinarySearch(){
+  const [arr, setArr] = useState(()=>Array.from({length:15},(_,i)=>(i+1)*3 + Math.floor(Math.random()*2)));
+  const [target, setTarget] = useState(()=>arr[Math.floor(Math.random()*arr.length)]);
+  const [lo, setLo] = useState(0);
+  const [hi, setHi] = useState(arr.length-1);
+  const [mid, setMid] = useState(-1);
+  const [found, setFound] = useState(null);
+  const [log, setLog] = useState([]);
+
+  const reset = (newArr=arr, newTarget=target) => {
+    setArr(newArr); setTarget(newTarget);
+    setLo(0); setHi(newArr.length-1); setMid(-1); setFound(null); setLog([]);
+  };
+  const shuffle = () => {
+    const a = Array.from({length:15},(_,i)=>(i+1)*3 + Math.floor(Math.random()*2));
+    reset(a, a[Math.floor(Math.random()*a.length)]);
+  };
+  const step = () => {
+    if (found!=null || lo>hi) return;
+    const m = (lo+hi)>>1; setMid(m);
+    if (arr[m]===target){ setFound(m); setLog(l=>[...l,`arr[${m}] = ${arr[m]} = target → found`]); }
+    else if (arr[m]<target){ setLo(m+1); setLog(l=>[...l,`arr[${m}] = ${arr[m]} < ${target} → go right`]); }
+    else { setHi(m-1); setLog(l=>[...l,`arr[${m}] = ${arr[m]} > ${target} → go left`]); }
+  };
+
+  return html`
+    <div class="grid lg:grid-cols-2 gap-6">
+      <div class="card p-5">
+        <div class="text-sm text-gray-400 mb-3">Find <span class="font-mono text-brand-400 font-bold">${target}</span> in this sorted array:</div>
+        <div class="flex flex-wrap gap-1">
+          ${arr.map((v,i)=>{
+            const inRange = i>=lo && i<=hi;
+            const isMid = i===mid;
+            const isFound = found===i;
+            let cls = "bg-ink-700 text-gray-600";
+            if (inRange) cls = "bg-ink-600 text-gray-200";
+            if (isMid) cls = "bg-accent-500 text-white ring-2 ring-accent-300";
+            if (isFound) cls = "bg-lime-400 text-ink-950 ring-2 ring-lime-400";
+            return html`<div key=${i} class=${cx("w-10 h-10 rounded-lg font-mono font-bold text-sm flex items-center justify-center transition-all", cls)}>${v}</div>`;
+          })}
+        </div>
+        <div class="flex gap-2 mt-4 text-xs font-mono">
+          <div class="text-brand-400">lo=${lo}</div>
+          <div class="text-accent-400">mid=${mid<0?"—":mid}</div>
+          <div class="text-brand-400">hi=${hi}</div>
+          ${found!=null && html`<div class="text-lime-400">found at index ${found}</div>`}
+          ${lo>hi && found==null && html`<div class="text-red-400">not present</div>`}
+        </div>
+        <div class="mt-4 flex gap-2">
+          <button class="btn btn-primary" onClick=${step} disabled=${found!=null || lo>hi}>${I.step}<span>Step</span></button>
+          <button class="btn" onClick=${()=>reset()}>${I.reset}<span>Reset</span></button>
+          <button class="btn" onClick=${shuffle}>${I.shuffle}<span>New</span></button>
+          <select class="btn" value=${target} onChange=${e=>reset(arr,+e.target.value)}>
+            ${arr.map(v=>html`<option key=${v} value=${v}>target = ${v}</option>`)}
+            <option value=${999}>target = 999 (miss)</option>
+          </select>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="card p-5">
+          <div class="chip bg-brand-500/15 text-brand-400 mb-2">Intuition</div>
+          <p class="text-gray-300 text-[14.5px] leading-relaxed">
+            Each step halves the search space. After <span class="font-mono text-white">k</span> steps,
+            the live range has size <span class="font-mono text-white">n/2ᵏ</span>.
+            So finding or ruling out takes <span class="font-mono text-brand-400">⌈log₂ n⌉</span> steps — only ~20 for a million items.
+          </p>
+        </div>
+        <div class="card p-5 max-h-60 overflow-auto scrollbar">
+          <div class="text-xs uppercase tracking-wider text-gray-500 mb-2">Trace</div>
+          ${log.length===0
+            ? html`<div class="text-gray-500 text-sm">Press <span class="kbd">Step</span> to begin.</div>`
+            : html`<ol class="text-[13px] font-mono space-y-1">
+                ${log.map((l,i)=>html`<li key=${i} class="text-gray-300"><span class="text-gray-500">${i+1}.</span> ${l}</li>`)}
+              </ol>`}
+        </div>
+        <${Quiz}
+          question="How many comparisons does binary search need on 1,048,576 sorted items, worst case?"
+          choices=${["~10","~20","~1,000","~1,000,000"]}
+          answerIndex=${1}
+          explain="log₂(1,048,576) = 20."/>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: BFS / DFS on a grid
+ * ============================================================= */
+function LessonBFSDFS(){
+  const ROWS=10, COLS=16;
+  const [mode, setMode] = useState("BFS");
+  const [walls, setWalls] = useState(()=>new Set());
+  const [start, setStart] = useState([1,1]);
+  const [goal, setGoal]   = useState([ROWS-2, COLS-2]);
+  const [brush, setBrush] = useState("wall");
+  const [visited, setVisited] = useState(new Set());
+  const [frontier, setFrontier] = useState(new Set());
+  const [path, setPath] = useState([]);
+  const [speed, setSpeed] = useState(80);
+
+  const key = (r,c)=>`${r},${c}`;
+  const inside = (r,c)=>r>=0&&r<ROWS&&c>=0&&c<COLS;
+
+  function* explore(){
+    const v=new Set([key(...start)]);
+    const parent=new Map(); parent.set(key(...start), null);
+    const dq=[start];
+    const f=new Set([key(...start)]);
+    while(dq.length){
+      const [r,c] = mode==="BFS" ? dq.shift() : dq.pop();
+      f.delete(key(r,c));
+      v.add(key(r,c));
+      setVisited(new Set(v)); setFrontier(new Set(f)); yield;
+      if (r===goal[0]&&c===goal[1]){
+        const p=[]; let cur=key(r,c);
+        while(cur){ const [R,C]=cur.split(",").map(Number); p.push([R,C]); cur = parent.get(cur); }
+        setPath(p.reverse()); return;
+      }
+      for (const [dr,dc] of [[1,0],[-1,0],[0,1],[0,-1]]){
+        const nr=r+dr, nc=c+dc, k=key(nr,nc);
+        if (!inside(nr,nc)||walls.has(k)||v.has(k)||f.has(k)) continue;
+        f.add(k); parent.set(k, key(r,c)); dq.push([nr,nc]);
+      }
+    }
+  }
+
+  const runner = useAlgoRunner(()=>explore(), [mode, walls, start.join(), goal.join()], { speed });
+  const reset = () => { runner.reset(); setVisited(new Set()); setFrontier(new Set()); setPath([]); };
+  useEffect(reset, [mode, walls, start[0], start[1], goal[0], goal[1]]); // eslint-disable-line
+
+  const click = (r,c) => {
+    const k=key(r,c);
+    if (brush==="start") setStart([r,c]);
+    else if (brush==="goal") setGoal([r,c]);
+    else {
+      if (k===key(...start)||k===key(...goal)) return;
+      const s = new Set(walls);
+      s.has(k) ? s.delete(k) : s.add(k);
+      setWalls(s);
+    }
+  };
+
+  return html`
+    <div class="grid lg:grid-cols-[1fr_320px] gap-6">
+      <div class="card p-5">
+        <div class="flex flex-wrap items-center gap-2 mb-3">
+          <button class=${cx("btn text-xs",mode==="BFS"&&"border-brand-500 bg-brand-500/10 text-brand-300")} onClick=${()=>setMode("BFS")}>BFS (queue)</button>
+          <button class=${cx("btn text-xs",mode==="DFS"&&"border-accent-500 bg-accent-500/10 text-accent-400")} onClick=${()=>setMode("DFS")}>DFS (stack)</button>
+          <div class="w-px h-5 bg-ink-600 mx-1"></div>
+          ${["wall","start","goal"].map(b=>html`<button key=${b} class=${cx("btn text-xs capitalize",brush===b&&"border-brand-500 text-brand-300")} onClick=${()=>setBrush(b)}>${b}</button>`)}
+          <button class="btn text-xs ml-auto" onClick=${()=>{setWalls(new Set()); reset();}}>${I.reset}<span>Clear</span></button>
+        </div>
+        <div class="grid gap-[2px] select-none" style=${{gridTemplateColumns:`repeat(${COLS},1fr)`}}>
+          ${Array.from({length:ROWS},(_,r)=>Array.from({length:COLS},(_,c)=>{
+            const k=key(r,c);
+            const isStart = r===start[0]&&c===start[1];
+            const isGoal  = r===goal[0]&&c===goal[1];
+            const isWall  = walls.has(k);
+            const isPath  = path.some(([R,C])=>R===r&&C===c);
+            const isFront = frontier.has(k);
+            const isVis   = visited.has(k);
+            let cls="bg-ink-700";
+            if (isVis) cls="bg-brand-500/30";
+            if (isFront) cls="bg-accent-500/60";
+            if (isPath) cls="bg-lime-400";
+            if (isWall) cls="bg-ink-950 border border-ink-600";
+            if (isStart) cls="bg-brand-400";
+            if (isGoal)  cls="bg-accent-500";
+            return html`<div key=${k} onClick=${()=>click(r,c)} class=${cx("aspect-square rounded-[3px] cursor-pointer transition-all", cls)}></div>`;
+          }))}
+        </div>
+        <div class="mt-4">
+          <${Controls} running=${runner.running}
+            onPlay=${()=>runner.setRunning(true)}
+            onPause=${()=>runner.setRunning(false)}
+            onStep=${()=>runner.step()}
+            onReset=${reset}
+            speed=${speed} setSpeed=${setSpeed}/>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="card p-5 text-[14px] leading-relaxed">
+          <div class="chip bg-brand-500/15 text-brand-400 mb-2">Core idea</div>
+          <p class="text-gray-300">
+            BFS explores layer-by-layer using a <span class="font-mono text-brand-400">queue</span> — it guarantees shortest paths in unweighted graphs.
+            DFS dives deep using a <span class="font-mono text-accent-400">stack</span> — good for connectivity, cycles, and topological order.
+          </p>
+        </div>
+        <div class="card p-5 text-[13px] font-mono leading-6">
+          <div class="text-xs uppercase tracking-wider text-gray-500 mb-2 font-sans">Pseudocode — BFS</div>
+<pre class="code m-0"><span class="kw">function</span> <span class="fn">bfs</span>(start, goal):
+  q = <span class="fn">Queue</span>([start])
+  seen = {start}
+  <span class="kw">while</span> q:
+    v = q.<span class="fn">pop_front</span>()
+    <span class="kw">if</span> v == goal: <span class="kw">return</span> v
+    <span class="kw">for</span> n <span class="kw">in</span> <span class="fn">neighbors</span>(v):
+      <span class="kw">if</span> n <span class="kw">not in</span> seen:
+        seen.<span class="fn">add</span>(n); q.<span class="fn">push</span>(n)
+</pre>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: RECURSION (Fibonacci tree + memoization)
+ * ============================================================= */
+function LessonRecursion(){
+  const [n, setN] = useState(6);
+  const [memoize, setMemoize] = useState(false);
+  const tree = useMemo(()=>{
+    let id=0;
+    const memo = new Map();
+    const build = (k)=>{
+      const node = { id:id++, k, children:[], memoHit:false };
+      if (memoize && memo.has(k)){ node.memoHit = true; return node; }
+      if (k<=1){ memo.set(k,node); return node; }
+      node.children.push(build(k-1));
+      node.children.push(build(k-2));
+      memo.set(k,node);
+      return node;
+    };
+    return build(n);
+  },[n,memoize]);
+
+  // layout
+  const positions = useMemo(()=>{
+    const pos=new Map();
+    let leaf=0;
+    const walk=(node,depth)=>{
+      if (!node.children.length){ pos.set(node.id,{x:leaf++, y:depth}); return; }
+      node.children.forEach(c=>walk(c,depth+1));
+      const xs = node.children.map(c=>pos.get(c.id).x);
+      pos.set(node.id,{x:(Math.min(...xs)+Math.max(...xs))/2, y:depth});
+    };
+    walk(tree,0);
+    return pos;
+  },[tree]);
+
+  const nodes=[]; const edges=[];
+  (function collect(n){ nodes.push(n); n.children.forEach(c=>{ edges.push([n,c]); collect(c); });})(tree);
+  const maxX = Math.max(...[...positions.values()].map(p=>p.x));
+  const maxY = Math.max(...[...positions.values()].map(p=>p.y));
+  const W = Math.max(500, (maxX+1)*60);
+  const H = (maxY+1)*70 + 20;
+  const pt = id => { const p = positions.get(id); return { x: 30 + p.x*(W-60)/Math.max(1,maxX), y: 30 + p.y*60 }; };
+
+  return html`
+    <div class="grid lg:grid-cols-[1fr_300px] gap-6">
+      <div class="card p-5">
+        <div class="flex items-center gap-3 mb-3 text-sm text-gray-400">
+          <span>fib(<span class="font-mono text-white">n</span>=${n})</span>
+          <input type="range" min="2" max="9" value=${n} onInput=${e=>setN(+e.target.value)} class="accent-brand-500 w-36"/>
+          <label class="flex items-center gap-2 ml-auto">
+            <input type="checkbox" checked=${memoize} onChange=${e=>setMemoize(e.target.checked)} class="accent-brand-500"/>
+            Memoize
+          </label>
+        </div>
+        <div class="overflow-auto scrollbar rounded-xl bg-ink-900/70 border border-ink-600" style=${{maxHeight:380}}>
+          <svg viewBox=${`0 0 ${W} ${H}`} width=${W} height=${H}>
+            ${edges.map(([p,c],i)=>{
+              const a=pt(p.id), b=pt(c.id);
+              return html`<line key=${i} x1=${a.x} y1=${a.y} x2=${b.x} y2=${b.y} stroke=${c.memoHit?"#bef264":"#2a3040"} stroke-width="1.5" stroke-dasharray=${c.memoHit?"4 3":"0"}/>`;
+            })}
+            ${nodes.map(n=>{
+              const p=pt(n.id);
+              const fill = n.memoHit ? "#bef264" : n.k<=1 ? "#22d3ee" : "#171b26";
+              const stroke = n.memoHit ? "#bef264" : "#22d3ee";
+              return html`<g key=${n.id} class="node-anim">
+                <circle cx=${p.x} cy=${p.y} r="14" fill=${fill} stroke=${stroke} stroke-width="1.5"/>
+                <text x=${p.x} y=${p.y+4} text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill=${n.memoHit||n.k<=1?"#08090c":"#e6e8ee"} font-weight="700">${n.k}</text>
+              </g>`;
+            })}
+          </svg>
+        </div>
+        <div class="mt-3 text-xs text-gray-400 flex flex-wrap gap-3">
+          <span class="chip bg-brand-500/15 text-brand-400"><span class="w-2 h-2 rounded-full bg-brand-500"></span>base case</span>
+          <span class="chip bg-accent-500/15 text-accent-400"><span class="w-2 h-2 rounded-full bg-accent-500"></span>recursive call</span>
+          <span class="chip bg-lime-400/15 text-lime-400"><span class="w-2 h-2 rounded-full bg-lime-400"></span>memo hit</span>
+          <span class="ml-auto font-mono text-white">calls: ${nodes.length}</span>
+        </div>
+      </div>
+
+      <div class="space-y-4">
+        <div class="card p-5 text-[14px] leading-relaxed">
+          <div class="chip bg-accent-500/15 text-accent-400 mb-2">Why memoize?</div>
+          <p class="text-gray-300">
+            Naive recursion recomputes the same subproblems exponentially — the tree is fat on the left because
+            <span class="font-mono text-white">fib(k-1)</span> overlaps with <span class="font-mono text-white">fib(k-2)</span>.
+            Memoization caches each unique <span class="font-mono text-white">k</span>, turning the tree into a thin DAG and cutting <span class="font-mono text-brand-400">O(φⁿ)</span> to <span class="font-mono text-lime-400">O(n)</span>.
+          </p>
+        </div>
+<pre class="code m-0"><span class="kw">def</span> <span class="fn">fib</span>(n, memo={}):
+  <span class="kw">if</span> n <span class="kw">in</span> memo: <span class="kw">return</span> memo[n]
+  <span class="kw">if</span> n <span class="kw">&lt;=</span> <span class="num">1</span>: <span class="kw">return</span> n
+  memo[n] = <span class="fn">fib</span>(n<span class="kw">-</span><span class="num">1</span>,memo) <span class="kw">+</span> <span class="fn">fib</span>(n<span class="kw">-</span><span class="num">2</span>,memo)
+  <span class="kw">return</span> memo[n]
+</pre>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: LINKED LIST (interactive insert / delete)
+ * ============================================================= */
+function LessonLinked(){
+  const [list, setList] = useState([7,14,22,31]);
+  const [val, setVal] = useState(42);
+  const [pos, setPos] = useState(2);
+  const [hi, setHi] = useState(-1);
+
+  const animAt = async (i) => { setHi(i); await sleep(260); };
+
+  const insert = async () => {
+    setHi(-1);
+    for (let i=0;i<pos;i++) await animAt(i);
+    const a=list.slice(); a.splice(pos,0,val);
+    setList(a);
+    setHi(pos); await sleep(500); setHi(-1);
+  };
+  const remove = async () => {
+    if (list.length===0) return;
+    setHi(-1);
+    for (let i=0;i<pos && i<list.length;i++) await animAt(i);
+    const a=list.slice(); a.splice(Math.min(pos,a.length-1),1);
+    setHi(-1); setList(a);
+  };
+
+  return html`
+    <div class="card p-5">
+      <div class="flex flex-wrap items-center gap-2 mb-4 text-sm">
+        <label class="flex items-center gap-2">value <input type="number" value=${val} onChange=${e=>setVal(+e.target.value)} class="bg-ink-700 border border-ink-600 rounded px-2 py-1 w-20 font-mono"/></label>
+        <label class="flex items-center gap-2">position <input type="number" value=${pos} min="0" max=${list.length} onChange=${e=>setPos(clamp(+e.target.value,0,list.length))} class="bg-ink-700 border border-ink-600 rounded px-2 py-1 w-16 font-mono"/></label>
+        <button class="btn btn-primary" onClick=${insert}>Insert</button>
+        <button class="btn" onClick=${remove}>Remove</button>
+      </div>
+      <div class="flex flex-wrap items-center gap-2 min-h-[80px]">
+        <div class="text-xs text-gray-500 font-mono">head →</div>
+        ${list.map((v,i)=>html`
+          <div key=${i} class="flex items-center gap-1 fade-in">
+            <div class=${cx("w-16 h-14 rounded-xl border-2 flex items-center justify-center font-mono font-bold text-white transition-all", hi===i?"border-accent-500 bg-accent-500/20 scale-110":"border-ink-600 bg-ink-800")}>${v}</div>
+            <div class="text-gray-500">${I.arrow}</div>
+          </div>`)}
+        <div class="text-xs text-gray-500 font-mono">null</div>
+      </div>
+      <div class="grid md:grid-cols-3 gap-3 mt-5 text-xs">
+        <div class="rounded-lg border border-ink-600 p-3"><div class="text-brand-400 font-semibold">Access by index</div><div class="font-mono text-gray-400 mt-1">O(n) — must walk</div></div>
+        <div class="rounded-lg border border-ink-600 p-3"><div class="text-brand-400 font-semibold">Insert at head</div><div class="font-mono text-gray-400 mt-1">O(1)</div></div>
+        <div class="rounded-lg border border-ink-600 p-3"><div class="text-brand-400 font-semibold">Insert at index</div><div class="font-mono text-gray-400 mt-1">O(n) — walk + rewire</div></div>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: STACKS & QUEUES
+ * ============================================================= */
+function LessonStackQueue(){
+  const [stack, setStack] = useState([]);
+  const [queue, setQueue] = useState([]);
+  const [v,setV] = useState(1);
+  return html`
+    <div class="grid md:grid-cols-2 gap-6">
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-white font-semibold">Stack (LIFO)</div>
+          <span class="chip bg-brand-500/15 text-brand-400">push/pop at top</span>
+        </div>
+        <div class="flex flex-col-reverse gap-1 min-h-[220px] items-center justify-start border border-dashed border-ink-600 rounded-xl p-3">
+          ${stack.map((x,i)=>html`<div key=${i} class="fade-in w-32 h-10 rounded bg-brand-500/20 border border-brand-500 text-brand-300 font-mono font-bold flex items-center justify-center">${x}</div>`)}
+          ${stack.length===0 && html`<div class="text-gray-500 text-xs self-center">empty</div>`}
+        </div>
+        <div class="flex gap-2 mt-3">
+          <input type="number" value=${v} onChange=${e=>setV(+e.target.value)} class="bg-ink-700 border border-ink-600 rounded px-2 py-1 w-20 font-mono text-sm"/>
+          <button class="btn btn-primary" onClick=${()=>{setStack(s=>[...s,v]); setV(x=>x+1);}}>push</button>
+          <button class="btn" onClick=${()=>setStack(s=>s.slice(0,-1))}>pop</button>
+        </div>
+      </div>
+      <div class="card p-5">
+        <div class="flex items-center justify-between mb-3">
+          <div class="text-white font-semibold">Queue (FIFO)</div>
+          <span class="chip bg-accent-500/15 text-accent-400">enqueue back, dequeue front</span>
+        </div>
+        <div class="flex gap-1 overflow-auto scrollbar min-h-[220px] items-center border border-dashed border-ink-600 rounded-xl p-3">
+          ${queue.map((x,i)=>html`<div key=${i} class="fade-in w-14 h-10 shrink-0 rounded bg-accent-500/20 border border-accent-500 text-accent-400 font-mono font-bold flex items-center justify-center">${x}</div>`)}
+          ${queue.length===0 && html`<div class="text-gray-500 text-xs">empty</div>`}
+        </div>
+        <div class="flex gap-2 mt-3">
+          <input type="number" value=${v} onChange=${e=>setV(+e.target.value)} class="bg-ink-700 border border-ink-600 rounded px-2 py-1 w-20 font-mono text-sm"/>
+          <button class="btn btn-primary" onClick=${()=>{setQueue(q=>[...q,v]); setV(x=>x+1);}}>enqueue</button>
+          <button class="btn" onClick=${()=>setQueue(q=>q.slice(1))}>dequeue</button>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: HASH TABLE
+ * ============================================================= */
+function LessonHash(){
+  const SIZE=10;
+  const [table, setTable] = useState(()=>Array.from({length:SIZE},()=>[]));
+  const [k,setK] = useState("claude");
+  const hash = (s) => {
+    let h=0; for (const c of s) h=(h*31 + c.charCodeAt(0))>>>0;
+    return h%SIZE;
+  };
+  const put = () => {
+    const h = hash(k);
+    setTable(t=>{ const nt=t.map(b=>b.slice()); nt[h] = [...nt[h].filter(x=>x!==k), k]; return nt; });
+  };
+  const del = () => {
+    const h = hash(k);
+    setTable(t=>{ const nt=t.map(b=>b.slice()); nt[h] = nt[h].filter(x=>x!==k); return nt; });
+  };
+  return html`
+    <div class="card p-5">
+      <div class="flex items-center gap-2 mb-3 text-sm">
+        <input value=${k} onChange=${e=>setK(e.target.value)} class="bg-ink-700 border border-ink-600 rounded px-2 py-1 font-mono"/>
+        <span class="text-gray-500 font-mono">→ bucket ${hash(k)}</span>
+        <button class="btn btn-primary ml-auto" onClick=${put}>insert</button>
+        <button class="btn" onClick=${del}>delete</button>
+        <button class="btn" onClick=${()=>setTable(Array.from({length:SIZE},()=>[]))}>clear</button>
+      </div>
+      <div class="grid gap-2">
+        ${table.map((bucket,i)=>html`
+          <div key=${i} class=${cx("flex items-center gap-2 border rounded-xl px-3 py-2", hash(k)===i?"border-accent-500 bg-accent-500/10":"border-ink-600")}>
+            <div class="text-xs font-mono text-gray-500 w-6">${i}</div>
+            ${bucket.length===0
+              ? html`<div class="text-gray-600 text-xs">—</div>`
+              : bucket.map(key=>html`<span key=${key} class="fade-in chip bg-brand-500/15 text-brand-300 font-mono">${key}</span>`)}
+            ${bucket.length>1 && html`<span class="ml-auto chip bg-red-500/10 text-red-400">collision</span>`}
+          </div>`)}
+      </div>
+      <p class="text-gray-400 text-sm mt-4 leading-relaxed">
+        A hash function turns a key into a bucket index. Good functions spread keys uniformly — collisions are handled by
+        chaining (linked lists in a bucket) or open addressing (probe for the next slot).
+      </p>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: TREES (BST insert + traversal)
+ * ============================================================= */
+function LessonTrees(){
+  const [root, setRoot] = useState(null);
+  const [val, setVal] = useState(50);
+  const [order, setOrder] = useState([]);
+  const [hl, setHl] = useState(null);
+
+  const insert = (v) => {
+    const ins = (node)=>{
+      if (!node) return { v, l:null, r:null };
+      if (v<node.v) return { ...node, l: ins(node.l) };
+      if (v>node.v) return { ...node, r: ins(node.r) };
+      return node;
+    };
+    setRoot(r=>ins(r));
+  };
+
+  const traverse = async (kind) => {
+    const out=[];
+    const go = async (n)=>{
+      if (!n) return;
+      if (kind==="pre") out.push(n.v);
+      await go(n.l);
+      if (kind==="in") out.push(n.v);
+      await go(n.r);
+      if (kind==="post") out.push(n.v);
+    };
+    await go(root);
+    setOrder([]);
+    for (const v of out){ setHl(v); setOrder(o=>[...o,v]); await sleep(300); }
+    setHl(null);
+  };
+
+  // layout
+  const positions = new Map(); let idx=0;
+  (function walk(n,d=0){ if(!n)return; walk(n.l,d+1); positions.set(n.v,{x:idx++,y:d}); walk(n.r,d+1); })(root);
+  const W=520,H=260;
+  const maxX=Math.max(1, ...[...positions.values()].map(p=>p.x));
+  const maxY=Math.max(1, ...[...positions.values()].map(p=>p.y));
+  const pt = v => { const p=positions.get(v); return { x: 30 + p.x*(W-60)/maxX, y: 30 + p.y*(H-60)/Math.max(1,maxY) }; };
+
+  const edges=[];
+  (function walk(n){ if(!n)return; if(n.l){edges.push([n.v,n.l.v]);walk(n.l);} if(n.r){edges.push([n.v,n.r.v]);walk(n.r);} })(root);
+
+  return html`
+    <div class="grid lg:grid-cols-[1fr_320px] gap-6">
+      <div class="card p-5">
+        <div class="flex items-center gap-2 mb-3 text-sm">
+          <input type="number" value=${val} onChange=${e=>setVal(+e.target.value)} class="bg-ink-700 border border-ink-600 rounded px-2 py-1 w-20 font-mono"/>
+          <button class="btn btn-primary" onClick=${()=>{insert(val); setVal(Math.floor(Math.random()*99)+1);}}>insert</button>
+          <button class="btn" onClick=${()=>{[50,25,75,12,37,62,87,6,30].forEach(insert);}}>seed sample</button>
+          <button class="btn" onClick=${()=>{setRoot(null); setOrder([]);}}>clear</button>
+        </div>
+        <div class="rounded-xl bg-ink-900/70 border border-ink-600 p-3 overflow-auto">
+          <svg viewBox=${`0 0 ${W} ${H}`} width=${W} height=${H} class="mx-auto">
+            ${edges.map(([a,b],i)=>{const A=pt(a),B=pt(b);return html`<line key=${i} x1=${A.x} y1=${A.y} x2=${B.x} y2=${B.y} stroke="#2a3040" stroke-width="1.5"/>`;})}
+            ${[...positions.keys()].map(v=>{const p=pt(v); const h=hl===v;
+              return html`<g key=${v} class="node-anim">
+                <circle cx=${p.x} cy=${p.y} r="16" fill=${h?"#bef264":"#171b26"} stroke=${h?"#bef264":"#22d3ee"} stroke-width="1.8"/>
+                <text x=${p.x} y=${p.y+4} text-anchor="middle" font-size="11" font-family="JetBrains Mono" fill=${h?"#08090c":"#e6e8ee"} font-weight="700">${v}</text>
+              </g>`;})}
+          </svg>
+        </div>
+      </div>
+      <div class="space-y-3">
+        <div class="card p-5">
+          <div class="text-white font-semibold mb-2">Traversals</div>
+          <div class="flex gap-2 mb-3">
+            <button class="btn" onClick=${()=>traverse("pre")}>Pre-order</button>
+            <button class="btn" onClick=${()=>traverse("in")}>In-order</button>
+            <button class="btn" onClick=${()=>traverse("post")}>Post-order</button>
+          </div>
+          <div class="font-mono text-sm text-brand-400 min-h-[24px]">${order.join("  ·  ") || "—"}</div>
+          <p class="text-gray-400 text-[13px] mt-3 leading-relaxed">
+            In-order on a BST yields <span class="text-white">sorted</span> output.
+            Pre-order is perfect for copying a tree; post-order for deleting it safely.
+          </p>
+        </div>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: ARRAYS
+ * ============================================================= */
+function LessonArrays(){
+  const [arr,setArr]=useState([4,15,2,37,11,9,28,6]);
+  const [target,setTarget]=useState(11);
+  const [i,setI]=useState(-1);
+  const [done,setDone]=useState(false);
+
+  const run = async () => {
+    setDone(false);
+    for (let k=0;k<arr.length;k++){
+      setI(k); await sleep(220);
+      if (arr[k]===target){ setDone(true); return; }
+    }
+    setI(-1); setDone(true);
+  };
+  return html`
+    <div class="card p-5">
+      <div class="flex items-center gap-2 mb-4 text-sm">
+        <span class="text-gray-400">Find</span>
+        <input type="number" value=${target} onChange=${e=>setTarget(+e.target.value)} class="bg-ink-700 border border-ink-600 rounded px-2 py-1 w-20 font-mono"/>
+        <button class="btn btn-primary" onClick=${run}>Linear scan</button>
+        <button class="btn" onClick=${()=>{setArr(rand(10,1,40)); setI(-1); setDone(false);}}>Shuffle</button>
+      </div>
+      <div class="flex gap-2 flex-wrap">
+        ${arr.map((v,k)=>html`
+          <div key=${k} class="flex flex-col items-center">
+            <div class="text-[10px] font-mono text-gray-500">${k}</div>
+            <div class=${cx("w-14 h-14 rounded-xl flex items-center justify-center font-mono font-bold transition-all",
+              i===k?"bg-accent-500 text-white ring-2 ring-accent-300 scale-110":
+              done && v===target?"bg-lime-400 text-ink-950":
+              "bg-ink-700 text-gray-200")}>${v}</div>
+          </div>`)}
+      </div>
+      <p class="text-gray-400 text-sm mt-4 leading-relaxed">
+        Arrays are contiguous memory indexed in <span class="font-mono text-brand-400">O(1)</span>.
+        Unsorted search is <span class="font-mono text-accent-400">O(n)</span>; sorted enables binary search <span class="font-mono text-lime-400">O(log n)</span>.
+      </p>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: DP (coin change — table visualizer)
+ * ============================================================= */
+function LessonDP(){
+  const [coins,setCoins]=useState([1,3,4]);
+  const [amount,setAmount]=useState(6);
+  const dp = useMemo(()=>{
+    const d = Array(amount+1).fill(Infinity); d[0]=0;
+    const from = Array(amount+1).fill(-1);
+    for (let a=1;a<=amount;a++){
+      for (const c of coins){
+        if (a-c>=0 && d[a-c]+1 < d[a]){ d[a]=d[a-c]+1; from[a]=c; }
+      }
+    }
+    return {d,from};
+  },[coins,amount]);
+
+  return html`
+    <div class="grid lg:grid-cols-[1fr_300px] gap-6">
+      <div class="card p-5">
+        <div class="flex items-center gap-2 mb-3 text-sm">
+          <span class="text-gray-400">amount</span>
+          <input type="range" min="1" max="25" value=${amount} onInput=${e=>setAmount(+e.target.value)} class="accent-brand-500 w-36"/>
+          <span class="font-mono text-white">${amount}</span>
+          <span class="text-gray-400 ml-4">coins</span>
+          <input value=${coins.join(",")} onChange=${e=>setCoins(e.target.value.split(",").map(x=>+x).filter(x=>x>0))} class="bg-ink-700 border border-ink-600 rounded px-2 py-1 w-28 font-mono"/>
+        </div>
+        <div class="grid gap-1" style=${{gridTemplateColumns:`repeat(${amount+1},minmax(0,1fr))`}}>
+          ${dp.d.map((v,i)=>html`
+            <div key=${i} class="text-center">
+              <div class="text-[10px] text-gray-500 font-mono">${i}</div>
+              <div class=${cx("rounded-lg h-10 flex items-center justify-center font-mono text-sm",
+                v===Infinity?"bg-ink-700 text-gray-500":
+                i===amount?"bg-lime-400 text-ink-950 font-bold":
+                "bg-brand-500/20 text-brand-300")}>${v===Infinity?"∞":v}</div>
+            </div>`)}
+        </div>
+        <p class="text-gray-400 text-sm mt-4 leading-relaxed">
+          <span class="font-mono text-white">dp[a] = 1 + min over coins c of dp[a-c]</span>.
+          Each subproblem reuses already-computed answers — classic overlap → DP.
+        </p>
+      </div>
+      <div class="space-y-3">
+        <div class="card p-5">
+          <div class="text-white font-semibold mb-2">Answer</div>
+          <div class="text-3xl font-bold text-lime-400">${dp.d[amount]===Infinity?"impossible":dp.d[amount]+" coins"}</div>
+        </div>
+<pre class="code m-0"><span class="kw">def</span> <span class="fn">coinChange</span>(coins, amount):
+  dp = [<span class="num">0</span>] + [inf]<span class="kw">*</span>amount
+  <span class="kw">for</span> a <span class="kw">in</span> <span class="fn">range</span>(<span class="num">1</span>, amount<span class="kw">+</span><span class="num">1</span>):
+    <span class="kw">for</span> c <span class="kw">in</span> coins:
+      <span class="kw">if</span> a <span class="kw">-</span> c <span class="kw">&gt;=</span> <span class="num">0</span>:
+        dp[a] = <span class="fn">min</span>(dp[a], dp[a<span class="kw">-</span>c] <span class="kw">+</span> <span class="num">1</span>)
+  <span class="kw">return</span> dp[amount]
+</pre>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON: DIJKSTRA (small weighted graph)
+ * ============================================================= */
+function LessonDijkstra(){
+  const nodes = [
+    {id:"A",x:60, y:60},{id:"B",x:220,y:40},{id:"C",x:380,y:70},
+    {id:"D",x:140,y:180},{id:"E",x:310,y:200},{id:"F",x:470,y:160}
+  ];
+  const edges = [
+    {a:"A",b:"B",w:4},{a:"A",b:"D",w:2},{a:"B",b:"C",w:5},{a:"B",b:"D",w:1},
+    {a:"D",b:"E",w:8},{a:"C",b:"E",w:2},{a:"C",b:"F",w:6},{a:"E",b:"F",w:3}
+  ];
+  const [dist,setDist] = useState({});
+  const [visited,setVisited] = useState(new Set());
+  const [active,setActive] = useState(null);
+  const [speed,setSpeed] = useState(60);
+
+  function* run(){
+    const d = {}; nodes.forEach(n=>d[n.id]=Infinity); d["A"]=0;
+    const v = new Set();
+    setDist({...d}); setVisited(new Set(v)); yield;
+    while(v.size < nodes.length){
+      let u=null, best=Infinity;
+      for (const n of nodes) if (!v.has(n.id) && d[n.id]<best){ best=d[n.id]; u=n.id; }
+      if (u==null) break;
+      setActive(u); yield;
+      v.add(u);
+      for (const e of edges){
+        let other=null;
+        if (e.a===u) other=e.b; else if (e.b===u) other=e.a;
+        if (!other || v.has(other)) continue;
+        if (d[u]+e.w < d[other]){ d[other]=d[u]+e.w; setDist({...d}); yield; }
+      }
+      setVisited(new Set(v)); yield;
+    }
+    setActive(null);
+  }
+  const runner = useAlgoRunner(()=>run(), [], { speed });
+  const reset = () => { runner.reset(); setDist({}); setVisited(new Set()); setActive(null); };
+
+  return html`
+    <div class="grid lg:grid-cols-[1fr_280px] gap-6">
+      <div class="card p-5">
+        <svg viewBox="0 0 540 260" class="w-full bg-ink-900/70 border border-ink-600 rounded-xl">
+          ${edges.map((e,i)=>{
+            const A=nodes.find(n=>n.id===e.a), B=nodes.find(n=>n.id===e.b);
+            return html`<g key=${i}>
+              <line x1=${A.x} y1=${A.y} x2=${B.x} y2=${B.y} stroke="#2a3040" stroke-width="2"/>
+              <rect x=${(A.x+B.x)/2-10} y=${(A.y+B.y)/2-10} width="20" height="16" rx="4" fill="#11141b" stroke="#1f2430"/>
+              <text x=${(A.x+B.x)/2} y=${(A.y+B.y)/2+2} text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#e6e8ee">${e.w}</text>
+            </g>`;
+          })}
+          ${nodes.map(n=>{
+            const isA = active===n.id, isV = visited.has(n.id);
+            return html`<g key=${n.id} class="node-anim">
+              <circle cx=${n.x} cy=${n.y} r="20" fill=${isA?"#fcd34d":isV?"#bef264":"#171b26"} stroke=${isA?"#fcd34d":isV?"#bef264":"#22d3ee"} stroke-width="2"/>
+              <text x=${n.x} y=${n.y+4} text-anchor="middle" font-size="13" font-family="JetBrains Mono" font-weight="700" fill=${isA||isV?"#08090c":"#e6e8ee"}>${n.id}</text>
+              <text x=${n.x} y=${n.y-26} text-anchor="middle" font-size="10" font-family="JetBrains Mono" fill="#9ca3af">${dist[n.id]==null?"":dist[n.id]===Infinity?"∞":dist[n.id]}</text>
+            </g>`;
+          })}
+        </svg>
+        <div class="mt-3"><${Controls} running=${runner.running}
+          onPlay=${()=>runner.setRunning(true)}
+          onPause=${()=>runner.setRunning(false)}
+          onStep=${()=>runner.step()}
+          onReset=${reset}
+          speed=${speed} setSpeed=${setSpeed}/></div>
+      </div>
+      <div class="card p-5 text-[14px] leading-relaxed">
+        <div class="chip bg-brand-500/15 text-brand-400 mb-2">Greedy relaxation</div>
+        <p class="text-gray-300">
+          Start from A with distance 0. Repeatedly pick the <span class="text-white">unvisited node with the smallest tentative distance</span>,
+          then relax its neighbors. With a min-heap the cost is <span class="font-mono text-brand-400">O((V+E) log V)</span>.
+        </p>
+        <p class="text-gray-400 text-[13px] mt-2">Yellow = currently being processed, green = finalized, number above node = best-known distance from A.</p>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON STUB for topics we sketch but haven't fully animated
+ * ============================================================= */
+function LessonStub({ title, note }){
+  return html`
+    <div class="card p-6">
+      <div class="chip bg-accent-500/15 text-accent-400 mb-3">Preview</div>
+      <div class="text-white text-xl font-bold mb-2">${title}</div>
+      <p class="text-gray-400 leading-relaxed text-[14.5px]">${note}</p>
+      <div class="mt-5 flex items-center gap-2 text-xs text-gray-500">
+        ${I.lock}<span>Interactive visualization — coming in your next session</span>
+      </div>
+    </div>`;
+}
+
+/* ============================================================= *
+ *   LESSON REGISTRY
+ * ============================================================= */
+const LESSONS = {
+  bigo:     { content: LessonBigO,        kind:"interactive" },
+  arrays:   { content: LessonArrays,      kind:"interactive" },
+  linked:   { content: LessonLinked,      kind:"interactive" },
+  stacks:   { content: LessonStackQueue,  kind:"interactive" },
+  hash:     { content: LessonHash,        kind:"interactive" },
+  binsearch:{ content: LessonBinarySearch,kind:"interactive" },
+  sorting:  { content: LessonSorting,     kind:"interactive" },
+  recursion:{ content: LessonRecursion,   kind:"interactive" },
+  trees:    { content: LessonTrees,       kind:"interactive" },
+  bfsdfs:   { content: LessonBFSDFS,      kind:"interactive" },
+  dijkstra: { content: LessonDijkstra,    kind:"interactive" },
+  dp:       { content: LessonDP,          kind:"interactive" },
+  greedy:   { content: ()=>html`<${LessonStub} title="Greedy Algorithms" note="Activity selection, Huffman coding, and the exchange-argument proof pattern. Choose locally optimal when the greedy choice property holds."/>`, kind:"stub" },
+  backtrack:{ content: ()=>html`<${LessonStub} title="Backtracking" note="N-Queens, Sudoku, and subset generation. We'll explore the search tree and prune invalid branches as early as possible."/>`, kind:"stub" },
+  union:    { content: ()=>html`<${LessonStub} title="Union-Find (DSU)" note="Path compression + union by rank to achieve near-constant amortized time. Powers Kruskal's MST and dynamic connectivity."/>`, kind:"stub" },
+  segtree:  { content: ()=>html`<${LessonStub} title="Segment Trees" note="Range sum, range min, and lazy propagation. Build in O(n), query and update in O(log n)."/>`, kind:"stub" },
+  kmp:      { content: ()=>html`<${LessonStub} title="KMP Pattern Matching" note="Build a failure function so you never re-scan characters. Linear-time string search that avoids the naive O(nm) trap."/>`, kind:"stub" },
+  mst:      { content: ()=>html`<${LessonStub} title="Minimum Spanning Trees" note="Kruskal processes sorted edges with DSU; Prim grows a tree with a priority queue. Both produce MSTs under the cut property."/>`, kind:"stub" },
+  flow:     { content: ()=>html`<${LessonStub} title="Max-Flow / Min-Cut" note="Augmenting paths in residual graphs. Edmonds–Karp gives polynomial time; duality links max-flow to min-cut."/>`, kind:"stub" },
+  np:       { content: ()=>html`<${LessonStub} title="NP & Approximation" note="P vs NP, reductions, verification. When exact is intractable, approximation and heuristics trade optimality for speed."/>`, kind:"stub" },
+};
+
+/* ============================================================= *
+ *   SHELL — Sidebar + main content
+ * ============================================================= */
+function App(){
+  const [done, setDone] = useLocalState("algo.done", {});
+  const [activeId, setActiveId] = useLocalState("algo.active", null);
+  const allTopics = CURRICULUM.flatMap(l=>l.topics);
+  const active = allTopics.find(t=>t.id===activeId);
+  const progress = Object.values(done).filter(Boolean).length;
+  const total = allTopics.length;
+
+  const pick = (id) => setActiveId(id);
+  const back = () => setActiveId(null);
+  const markDone = () => setDone(d=>({...d,[activeId]:true}));
+
+  const Lesson = active ? LESSONS[active.id]?.content : null;
+
+  return html`
+    <div class="min-h-screen">
+      <!-- top nav -->
+      <header class="sticky top-0 z-30 backdrop-blur bg-ink-950/80 border-b border-ink-600">
+        <div class="max-w-7xl mx-auto px-5 md:px-8 h-14 flex items-center gap-4">
+          <div class="flex items-center gap-2 cursor-pointer" onClick=${back}>
+            <div class="w-8 h-8 rounded-lg bg-gradient-to-br from-brand-500 to-accent-500 grid place-items-center font-bold text-ink-950">A</div>
+            <div class="font-bold tracking-tight">Algo Academy</div>
+            <span class="chip bg-accent-500/15 text-accent-400 ml-1 hidden sm:inline-flex">Beta</span>
+          </div>
+          <div class="ml-auto flex items-center gap-3">
+            <div class="hidden md:flex items-center gap-3 text-xs text-gray-400">
+              <div class="w-36 h-1.5 rounded-full bg-ink-700 overflow-hidden">
+                <div class="h-full bg-gradient-to-r from-brand-500 to-accent-500" style=${{width:`${(progress/total)*100}%`}}></div>
+              </div>
+              <span class="font-mono text-white">${progress}/${total}</span>
+            </div>
+            <span class="text-xs text-gray-500 hidden md:inline">Hi, ChinaHarry</span>
+          </div>
+        </div>
+      </header>
+
+      ${!active ? html`
+        <!-- LANDING -->
+        <section class="max-w-7xl mx-auto px-5 md:px-8 pt-12 pb-10 grid-dots">
+          <div class="max-w-3xl">
+            <div class="chip bg-brand-500/10 text-brand-400 mb-5">${I.spark}<span>Interactive learning, Brilliant-style</span></div>
+            <h1 class="text-4xl md:text-6xl font-extrabold text-white leading-[1.05] tracking-tight">
+              Master algorithms <span class="bg-gradient-to-r from-brand-400 to-accent-400 bg-clip-text text-transparent">from beginner to mastery.</span>
+            </h1>
+            <p class="text-gray-400 text-lg mt-5 leading-relaxed">
+              A hands-on curriculum built around live visualizations. Every topic you tap opens a playground —
+              step through the algorithm, change the input, see the ideas <em>move</em>.
+            </p>
+            <div class="flex flex-wrap gap-3 mt-7">
+              <button class="btn btn-primary" onClick=${()=>pick("bigo")}>${I.play}<span>Start with Big-O</span></button>
+              <button class="btn" onClick=${()=>pick("sorting")}>Jump to Sorting ${I.arrow}</button>
+            </div>
+          </div>
+        </section>
+
+        <section class="max-w-7xl mx-auto px-5 md:px-8 pb-20">
+          ${CURRICULUM.map((lvl,li)=>html`
+            <div key=${lvl.level} class="mb-10">
+              <div class="flex items-baseline gap-3 mb-4">
+                <div class="text-[11px] font-mono tracking-widest uppercase text-gray-500">Level ${li+1}</div>
+                <h3 class="text-xl font-bold text-white">${lvl.level}</h3>
+                <div class="h-px flex-1 bg-ink-600"></div>
+                <span class="chip bg-ink-700 text-gray-400">${lvl.tag}</span>
+              </div>
+              <div class="grid md:grid-cols-2 lg:grid-cols-3 gap-4">
+                ${lvl.topics.map((t,ti)=>{
+                  const d = !!done[t.id];
+                  const interactive = LESSONS[t.id]?.kind === "interactive";
+                  return html`
+                    <button key=${t.id} onClick=${()=>pick(t.id)}
+                      class="group text-left card p-5 relative overflow-hidden hover:border-brand-500/60 transition">
+                      <div class=${`absolute -top-10 -right-10 w-28 h-28 rounded-full opacity-30 blur-2xl bg-gradient-to-br ${lvl.hue}`}></div>
+                      <div class="flex items-start gap-3 relative">
+                        <div class=${`w-9 h-9 shrink-0 rounded-lg bg-gradient-to-br ${lvl.hue} text-ink-950 grid place-items-center font-bold`}>
+                          ${String(ti+1).padStart(2,"0")}
+                        </div>
+                        <div class="flex-1">
+                          <div class="flex items-center gap-2">
+                            <div class="text-white font-semibold">${t.title}</div>
+                            ${d && html`<span class="chip bg-lime-400/15 text-lime-400">${I.check}<span>Done</span></span>`}
+                            ${!interactive && html`<span class="chip bg-gray-700 text-gray-400">${I.lock}<span>Preview</span></span>`}
+                          </div>
+                          <div class="text-sm text-gray-400 mt-1">${t.blurb}</div>
+                        </div>
+                      </div>
+                      <div class="mt-4 text-brand-400 text-sm font-semibold flex items-center gap-1 opacity-0 group-hover:opacity-100 transition">
+                        Open lesson ${I.arrow}
+                      </div>
+                    </button>`;
+                })}
+              </div>
+            </div>`)}
+
+          <div class="card p-6 mt-6">
+            <div class="flex items-center gap-3">
+              <div class="w-10 h-10 rounded-xl bg-accent-500/20 grid place-items-center text-accent-400">${I.spark}</div>
+              <div>
+                <div class="text-white font-semibold">How to use this site</div>
+                <div class="text-sm text-gray-400">Work top-to-bottom for a full path, or jump directly to any topic. Each interactive lesson supports <span class="kbd">Play</span>, <span class="kbd">Step</span>, and <span class="kbd">Shuffle</span> — experiment!</div>
+              </div>
+            </div>
+          </div>
+        </section>
+      ` : html`
+        <!-- LESSON PAGE -->
+        <section class="max-w-7xl mx-auto px-5 md:px-8 py-8">
+          <div class="flex items-center gap-2 text-sm text-gray-400 mb-5">
+            <button class="btn" onClick=${back}>← Roadmap</button>
+            <div class="ml-auto flex items-center gap-2">
+              ${done[active.id]
+                ? html`<span class="chip bg-lime-400/15 text-lime-400">${I.check}<span>Completed</span></span>`
+                : html`<button class="btn" onClick=${markDone}>${I.check}<span>Mark complete</span></button>`}
+            </div>
+          </div>
+
+          <${SectionHeader} eyebrow=${`${CURRICULUM.find(l=>l.topics.some(t=>t.id===active.id)).level} · Lesson`}
+             title=${active.title}>${active.blurb}</${SectionHeader}>
+
+          <div class="fade-in">
+            ${Lesson ? html`<${Lesson}/>` : html`<${LessonStub} title=${active.title} note=${active.blurb}/>`}
+          </div>
+
+          <!-- next/prev -->
+          <${LessonNav} id=${active.id} pick=${pick}/>
+        </section>
+      `}
+
+      <footer class="border-t border-ink-600 py-8 text-center text-xs text-gray-500">
+        Built for hands-on learning. Keyboard: <span class="kbd">Space</span> play/pause · <span class="kbd">→</span> step · <span class="kbd">R</span> reset.
+      </footer>
+    </div>`;
+}
+
+function LessonNav({ id, pick }){
+  const order = CURRICULUM.flatMap(l=>l.topics);
+  const idx = order.findIndex(t=>t.id===id);
+  const prev = order[idx-1], next = order[idx+1];
+  return html`
+    <div class="grid sm:grid-cols-2 gap-3 mt-10">
+      ${prev ? html`<button class="card p-4 text-left hover:border-brand-500/70" onClick=${()=>pick(prev.id)}>
+          <div class="text-xs text-gray-500 mb-1">← Previous</div>
+          <div class="text-white font-semibold">${prev.title}</div>
+        </button>` : html`<div/>`}
+      ${next ? html`<button class="card p-4 text-right hover:border-brand-500/70" onClick=${()=>pick(next.id)}>
+          <div class="text-xs text-gray-500 mb-1">Next →</div>
+          <div class="text-white font-semibold">${next.title}</div>
+        </button>` : html`<div/>`}
+    </div>`;
+}
+
+/* ============================================================= *
+ *   KEYBOARD SHORTCUTS — global nicety
+ * ============================================================= */
+window.addEventListener("keydown",(e)=>{
+  if (e.target.tagName==="INPUT"||e.target.tagName==="TEXTAREA") return;
+  // reserved — could hook to active runner if we lifted state
+});
+
+createRoot(document.getElementById("root")).render(html`<${App}/>`);
+</script>
+</body>
+</html>
