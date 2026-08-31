@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { chineseName } from "@/lib/bio";
 
 const links = [
   { href: "/work", label: "Work" },
@@ -12,6 +13,7 @@ export function SiteHeader() {
       <div className="mx-auto flex max-w-6xl items-baseline justify-between px-5 py-4 sm:px-8">
         <Link href="/" className="font-display text-2xl tracking-tight text-paper">
           Xinlong Bao
+          <span className="font-cjk ml-2 text-base text-paper-dim">{chineseName}</span>
         </Link>
         <nav className="flex gap-6 text-sm text-paper-dim">
           {links.map((l) => (

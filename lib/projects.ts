@@ -42,12 +42,14 @@ export const projects: Project[] = [
     featured: true,
     stack: ["ESP32", "Unity", "Apple Vision Pro", "UDP", "P20 pin-array", "TEC"],
     images: [
-      { src: "/projects/glove-prototype.jpg", alt: "Glove prototype worn during a mixed-reality test" },
-      { src: "/projects/glove-prototype-1.jpg", alt: "Second view of the haptic glove hardware" },
-      { src: "/projects/glove-prototype-2.jpg", alt: "Glove hardware on the bench" },
+      { src: "/life/gloves-bench.png", alt: "Left haptic glove on the bench, ESP32 and fingertip actuators" },
+      { src: "/life/vision-pro.png", alt: "Apple Vision Pro, the headset the gloves talk to" },
+      { src: "/life/vr-desk.jpg", alt: "Escape-room desk with laptop, wall keypad, clock, and candles" },
+      { src: "/life/vr-room.jpg", alt: "Overhead of the haptic escape room: fireplace, cabinet, desk" },
+      { src: "/life/vr-interrogation.jpg", alt: "Second visionOS room without haptics scripts" },
+      { src: "/life/gloves.jpg", alt: "Right-hand glove with ESP32 wrist board and fingertip sensors" },
+      { src: "/projects/glove-right.png", alt: "Right-hand module on the wall" },
       { src: "/projects/glove-poster.png", alt: "Research poster for the haptic glove project" },
-      { src: "/projects/glove-left.png", alt: "Left-hand module diagram" },
-      { src: "/projects/glove-right.png", alt: "Right-hand module diagram" },
     ],
     intro: [
       "Undergraduate thesis at De La Salle University (ESCA-1-2324-C2, AY 2023–24) with Patricia Guerrero, advised by Dr. Alexander Co Abad: Development of a Wearable Haptic Glove for Augmented Reality-Enhanced Escape Rooms.",
@@ -374,29 +376,6 @@ export const projects: Project[] = [
     conclusion: [
       "A more-than-human spec: default-off, spectrum, direction, duration. It is design work. It is not a shipped fixture.",
     ],
-  },
-];
-
-export const githubAlso = [
-  {
-    title: "brainstorm",
-    href: "https://github.com/ChinaHarry23/brainstorm",
-    note: "Claude Code on a phone",
-  },
-  {
-    title: "OJT",
-    href: "https://github.com/ChinaHarry23/OJT",
-    note: "On-the-job training outputs (Kotlin)",
-  },
-  {
-    title: "IEEE HNICEM Android app",
-    href: "https://github.com/ChinaHarry23/IEEE-HNICEM-Andriod-App",
-    note: "Android worker app, 2023",
-  },
-  {
-    title: "Course notes",
-    href: "https://github.com/ChinaHarry23/Master-Obsidian-note",
-    note: "Obsidian vault from the master’s",
   },
 ];
 

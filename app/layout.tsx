@@ -1,5 +1,7 @@
 import type { Metadata } from "next";
 import { Cormorant_Garamond, Figtree, IBM_Plex_Mono } from "next/font/google";
+import { Analytics } from "@vercel/analytics/next";
+import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import "./globals.css";
@@ -28,7 +30,7 @@ export const metadata: Metadata = {
     template: "%s — Xinlong Bao",
   },
   description:
-    "Software, hardware, and study systems. Master of Computer Science at the University of Sydney.",
+    "Xinlong Bao — Harry, 包新龙. Master of Computer Science at Sydney. AWP on FACEIT. Vision Pro, gloves, and the other CS.",
   icons: { icon: "/favicon.svg" },
 };
 
@@ -43,6 +45,8 @@ export default function RootLayout({
         <SiteHeader />
         {children}
         <SiteFooter />
+        <Analytics />
+        <SpeedInsights />
       </body>
     </html>
   );

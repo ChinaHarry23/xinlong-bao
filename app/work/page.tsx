@@ -17,7 +17,7 @@ export default function WorkPage() {
 
   return (
     <main className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-      <p className="cat">Inventory</p>
+      <p className="cat cat-spatial">Inventory</p>
       <h1 className="font-display mt-3 text-5xl tracking-tight">Work</h1>
       <p className="mt-4 max-w-xl text-paper-dim">
         One entry per finished loop. Duplicate checkouts, engine templates, and
