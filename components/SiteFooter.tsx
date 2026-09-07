@@ -35,6 +35,21 @@ export function SiteFooter() {
             Email
           </a>
         </p>
+        <a
+          href="https://brandmylaptop.com/chinaharry23"
+          target="_blank"
+          rel="noreferrer"
+          aria-label="See available sticker spots on my laptop"
+          className="shrink-0 rounded-xl opacity-80 transition-opacity hover:opacity-100 focus-visible:opacity-100 focus-visible:outline-2 focus-visible:outline-offset-4 focus-visible:outline-copper"
+        >
+          <img
+            src="https://brandmylaptop.com/api/badge/chinaharry23"
+            alt="Sticker spots on my laptop"
+            width="218"
+            height="56"
+            className="block h-10 w-auto"
+          />
+        </a>
       </div>
     </footer>
   );
