@@ -1,158 +1,88 @@
 import Link from "next/link";
-import { bench, chineseName, mosaic, rooms } from "@/lib/bio";
+import { bench, faceitUrl, publications } from "@/lib/bio";
 import { projects } from "@/lib/projects";
+import { ProjectCard } from "@/components/ProjectCard";
 
-function pad(n: number) {
-  return String(n).padStart(2, "0");
-}
+const selected = ["usyd-mastery", "aisle", "cloverpit"].map((slug) => projects.find((p) => p.slug === slug)!);
 
 export default function HomePage() {
   return (
-    <main>
-      <section className="band-hero">
-        <div className="mx-auto max-w-6xl px-5 pb-16 pt-16 sm:px-8 sm:pt-24">
-          <p className="cat">
-            Sydney · MCS (Advanced) · <span className="font-cjk normal-case tracking-normal">{chineseName}</span>
-          </p>
-          <h1 className="font-display mt-5 max-w-4xl text-5xl leading-[1.05] tracking-tight sm:text-7xl">
-            Computer science by degree. Counter-Strike by habit.
-          </h1>
-          <p className="mt-6 max-w-xl text-base leading-relaxed text-paper-dim sm:text-lg">
-            Xinlong Bao — Harry,{" "}
-            <span className="font-cjk text-paper">{chineseName}</span>. AWP on FACEIT as
-            Chinaharry17. Master’s at Sydney after Computer Engineering at DLSU. One CS I
-            already play like a doctorate. The other one I want as an actual PhD.
-          </p>
-          <div className="mt-8 flex flex-wrap gap-4 text-sm">
-            <Link
-              href="/work"
-              className="border border-paper px-4 py-2 text-paper hover:bg-paper hover:text-bg"
-            >
-              All work
+    <main id="main-content">
+      <section className="hero" aria-labelledby="hero-title">
+        <div className="hero-visual">
+          <img src="/life/vision-pro.png" alt="Apple Vision Pro, the headset used in my wearable haptics research" fetchPriority="high" />
+          <Link href="/work/haptic-glove" className="hero-caption"><span>01 / Spatial computing</span><span>Explore the research ↗</span></Link>
+        </div>
+        <div className="site-container hero-inner">
+          <div className="hero-copy">
+            <p className="eyebrow">Xinlong Bao / Engineer &amp; researcher</p>
+            <h1 id="hero-title">Curiosity.<br />In motion.</h1>
+            <p className="hero-description">From a line of code to something you can feel. I build across software, wearable haptics, and spatial computing.</p>
+            <div className="hero-actions">
+              <Link href="/work" className="button">Explore my work <span aria-hidden="true">↗</span></Link>
+              <Link href="/about" className="text-link">Meet Harry <span aria-hidden="true">↗</span></Link>
+            </div>
+          </div>
+        </div>
+      </section>
+      <div className="credentials-band">
+        <dl className="site-container credentials">
+          <div><dt>Based in</dt><dd>Sydney, AU</dd></div>
+          <div><dt>University of Sydney</dt><dd>MCS <span>/ Advanced</span></dd></div>
+          <div><dt>Across hardware &amp; software</dt><dd>{String(projects.length).padStart(2, "0")} <span>projects</span></dd></div>
+          <div><dt>First-author research</dt><dd>{String(publications.length).padStart(2, "0")} <span>IEEE papers</span></dd></div>
+        </dl>
+      </div>
+      <section className="section-pad site-container" aria-labelledby="featured-title">
+        <div className="section-heading"><p className="eyebrow">01 / Featured research</p><span className="section-aside">Hardware meets human experience</span></div>
+        <div className="research-feature">
+          <Link href="/work/haptic-glove" className="research-image" aria-label="Explore the haptic glove project">
+            <img src="/life/gloves-bench.png" alt="My haptic glove prototype with an ESP32 and wired fingertip actuators" loading="lazy" />
+            <span className="image-label">Haptic glove / Physical prototype</span>
+          </Link>
+          <div className="research-copy">
+            <p className="eyebrow">Wearable haptics · 2023–24</p>
+            <h2 id="featured-title" className="section-title">Beyond<br />the screen.</h2>
+            <p>A virtual collision. A physical response. Custom haptic gloves bring touch, vibration, and temperature to escape rooms on Apple Vision Pro.</p>
+            <dl className="research-specs">
+              <div><dt>Controller</dt><dd>ESP32</dd></div>
+              <div><dt>Platform</dt><dd>visionOS</dd></div>
+              <div><dt>Connection</dt><dd>UDP</dd></div>
+            </dl>
+            <Link href="/work/haptic-glove" className="button">Inside the project <span aria-hidden="true">↗</span></Link>
+          </div>
+        </div>
+      </section>
+      <section className="section-pad selected-section" aria-labelledby="selected-title">
+        <div className="site-container">
+          <div className="section-heading section-heading-large">
+            <div><p className="eyebrow">02 / Selected work</p><h2 id="selected-title" className="section-title">Ideas. Made tangible.</h2></div>
+            <Link href="/work" className="text-link">All {projects.length} projects <span aria-hidden="true">↗</span></Link>
+          </div>
+          <div className="project-grid">{selected.map((p, index) => <ProjectCard key={p.slug} project={p} index={index} headingLevel="h3" />)}</div>
+        </div>
+      </section>
+      <section className="section-pad site-container" aria-labelledby="bench-title">
+        <div className="section-heading section-heading-large">
+          <div><p className="eyebrow">03 / The bench</p><h2 id="bench-title" className="section-title">Behind the builds.</h2></div>
+          <Link href="/about#bench" className="text-link">The full setup <span aria-hidden="true">↗</span></Link>
+        </div>
+        <div className="bench-preview">
+          {bench.slice(0, 3).map((machine) => (
+            <Link href="/about#bench" key={machine.name} className="bench-item">
+              <div className="bench-image"><img src={machine.src} alt={machine.alt} loading="lazy" style={{ objectFit: machine.fit }} /></div>
+              <p className="eyebrow">{machine.kind}</p><h3>{machine.name}</h3><p>{machine.note}</p>
             </Link>
-            <Link href="/about" className="border border-line px-4 py-2 text-paper-dim hover:text-paper">
-              Bench &amp; about
-            </Link>
-            <Link href="/live" className="border border-line px-4 py-2 text-paper-dim hover:text-paper">
-              Live demos
-            </Link>
-          </div>
+          ))}
         </div>
       </section>
-
-      <section className="band-spatial">
-        <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-          <p className="cat cat-spatial">On the table</p>
-          <h2 className="font-display mt-3 text-4xl tracking-tight">Headset, gloves, room, locker.</h2>
-          <p className="mt-3 max-w-xl text-paper-dim">
-            No user-test portrait. The kit, the scene it talks to, and the other CS.
-          </p>
-          <div className="mt-10 grid gap-4 sm:grid-cols-2">
-            {mosaic.map((tile) => {
-              const inner = (
-                <>
-                  <div className="tile aspect-[16/10]">
-                    <img src={tile.src} alt={tile.alt} />
-                  </div>
-                  <p className="cat cat-spatial mt-3">{tile.caption}</p>
-                </>
-              );
-              return tile.external ? (
-                <a key={tile.src} href={tile.href} target="_blank" rel="noreferrer" className="group block">
-                  {inner}
-                </a>
-              ) : (
-                <Link key={tile.src} href={tile.href} className="group block">
-                  {inner}
-                </Link>
-              );
-            })}
+      <section className="off-duty" aria-labelledby="off-duty-title">
+        <div className="site-container off-duty-inner">
+          <div><p className="eyebrow">04 / Away from the bench</p><h2 id="off-duty-title" className="section-title">Two kinds<br />of CS.</h2>
+            <p>Computer science by degree. Counter-Strike by habit. Harry in Sydney. Chinaharry17 in the lobby.</p>
+            <a href={faceitUrl} target="_blank" rel="noreferrer" className="button">Find me on FACEIT <span aria-hidden="true">↗</span></a>
           </div>
-          <div className="mt-10 grid gap-4 sm:grid-cols-3">
-            {rooms.map((room) => (
-              <Link key={room.src} href="/work/haptic-glove" className="group block">
-                <div className="tile aspect-[16/10]">
-                  <img src={room.src} alt={room.alt} />
-                </div>
-                <p className="cat cat-spatial mt-3">{room.caption}</p>
-              </Link>
-            ))}
-          </div>
-        </div>
-      </section>
-
-      <section className="band-bench">
-        <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-          <p className="cat cat-alien">The bench</p>
-          <h2 className="font-display mt-3 text-4xl tracking-tight">What I actually run.</h2>
-          <p className="mt-3 max-w-xl text-paper-dim">
-            Area-51 for the lobby. A 4090 laptop when I leave the desk. M3 Max for the
-            master’s and Unity. Vision Pro for the gloves. Pine kit for Kali. One machine
-            still in the queue.
-          </p>
-          <ul className="mt-10 grid gap-4 sm:grid-cols-2">
-            {bench.map((row) => (
-              <li key={row.name} className="machine" data-tone={row.tone}>
-                <div className="machine-shot" data-fit={row.fit}>
-                  <img src={row.src} alt={row.alt} />
-                </div>
-                <div className="machine-copy">
-                  <p className="cat" data-tone={row.tone}>
-                    {row.kind}
-                  </p>
-                  <p className="font-display mt-2 text-2xl">{row.name}</p>
-                  <p className="mt-2 font-mono text-xs leading-relaxed tracking-wide text-paper">
-                    {row.spec}
-                  </p>
-                  <p className="mt-2 text-sm text-paper-dim">{row.note}</p>
-                </div>
-              </li>
-            ))}
-          </ul>
-        </div>
-      </section>
-
-      <section className="band-inventory">
-        <div className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-          <p className="cat cat-doppler">The other CS</p>
-          <h2 className="font-display mt-3 text-4xl tracking-tight">AWP first. Butterfly in the grid.</h2>
-          <p className="mt-3 max-w-xl text-paper-dim">
-            Chinaharry17 on FACEIT. Best AWPer in the lobby is the job, not a rank page.
-            Gamma Doppler in the locker is the other kind of proof.
-          </p>
-          <a
-            href="https://www.faceit.com/zh/players/Chinaharry17"
-            target="_blank"
-            rel="noreferrer"
-            className="tile mt-10 block aspect-[5/4] sm:aspect-[16/10]"
-          >
-            <img src="/life/cs-inventory.png" alt="Counter-Strike inventory grid" />
-          </a>
-        </div>
-      </section>
-
-      <section className="band-index">
-        <div className="mx-auto max-w-6xl px-5 py-20 sm:px-8">
-          <div className="mb-6 flex items-baseline justify-between">
-            <h2 className="font-display text-3xl">Index</h2>
-            <span className="num">{pad(projects.length)} entries</span>
-          </div>
-          <div className="rule mb-2" />
-          <ul>
-            {projects.map((p, i) => (
-              <li key={p.slug}>
-                <Link
-                  href={`/work/${p.slug}`}
-                  className="group grid grid-cols-[2.5rem_1fr_auto] items-baseline gap-3 border-b border-line py-3 sm:grid-cols-[3rem_1fr_8rem_5rem]"
-                >
-                  <span className="num">{pad(i + 1)}</span>
-                  <span className="text-[15px] group-hover:text-copper">{p.title}</span>
-                  <span className="hidden cat sm:block">{p.category}</span>
-                  <span className="num text-right">{p.year}</span>
-                </Link>
-              </li>
-            ))}
-          </ul>
+          <a href={faceitUrl} target="_blank" rel="noreferrer" className="off-duty-image"><img src="/life/cs-inventory.png" alt="My Counter-Strike inventory with Butterfly Knife Gamma Doppler" loading="lazy" /></a>
         </div>
       </section>
     </main>

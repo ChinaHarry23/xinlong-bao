@@ -74,7 +74,7 @@ export const bench: {
     name: "Alienware Area-51",
     kind: "Desktop",
     tone: "alien",
-    spec: "AMD Ryzen 9 9950X3D · RTX 5090 32 GB @ 1.79 TB/s · 64 GB @ 102 GB/s · 4 TB SSD @ 8 GB/s",
+    spec: "AMD Ryzen 9 9950X3D2 · RTX 5090 32 GB @ 1.79 TB/s · 64 GB @ 102 GB/s · 4 TB SSD @ 8 GB/s",
     note: "On the desk. The lobby machine.",
     src: "/life/bench/area51.jpg",
     alt: "Alienware Area-51 desktop, glass side panel and RTX card lit",

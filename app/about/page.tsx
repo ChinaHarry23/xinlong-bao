@@ -21,7 +21,7 @@ export const metadata = {
 
 export default function AboutPage() {
   return (
-    <main className="mx-auto max-w-3xl px-5 py-16 sm:px-8">
+    <main id="main-content" className="site-container page-content about-page">
       <p className="cat">About</p>
       <h1 className="font-display mt-3 text-5xl tracking-tight">Xinlong Bao</h1>
       <p className="mt-2 text-paper-dim">
@@ -57,26 +57,7 @@ export default function AboutPage() {
         </p>
       </section>
 
-      <section className="mt-16">
-        <p className="cat cat-alien">The bench</p>
-        <h2 className="font-display mt-3 text-3xl tracking-tight">Machines on hand.</h2>
-        <ul className="mt-6 grid gap-3">
-          {bench.map((row) => (
-            <li key={row.name} className="machine" data-tone={row.tone}>
-              <div className="machine-shot" data-fit={row.fit}>
-                <img src={row.src} alt={row.alt} />
-              </div>
-              <div className="machine-copy">
-                <p className="text-paper">
-                  {row.name} · {row.kind}
-                </p>
-                <p className="mt-1 font-mono text-xs tracking-wide">{row.spec}</p>
-                <p className="mt-1 text-sm text-paper-dim">{row.note}</p>
-              </div>
-            </li>
-          ))}
-        </ul>
-      </section>
+
 
       <section className="mt-16">
         <p className="cat">Education</p>
@@ -124,6 +105,27 @@ export default function AboutPage() {
         <p className="mt-4 text-sm text-paper-dim">
           Mandarin native · English fluent (TOEFL iBT 104, CEFR C1)
         </p>
+      </section>
+
+      <section id="bench" className="mt-16">
+        <p className="cat cat-alien">The bench</p>
+        <h2 className="font-display mt-3 text-3xl tracking-tight">Machines on hand.</h2>
+        <ul className="bench-grid">
+          {bench.map((row) => (
+            <li key={row.name} className="machine" data-tone={row.tone}>
+              <div className="machine-shot" data-fit={row.fit}>
+                <img src={row.src} alt={row.alt} loading="lazy" />
+              </div>
+              <div className="machine-copy">
+                <p className="text-paper">
+                  {row.name} · {row.kind}
+                </p>
+                <p className="mt-1 font-mono text-xs tracking-wide">{row.spec}</p>
+                <p className="mt-1 text-sm text-paper-dim">{row.note}</p>
+              </div>
+            </li>
+          ))}
+        </ul>
       </section>
 
       <section className="mt-16">

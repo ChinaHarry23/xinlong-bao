@@ -15,6 +15,12 @@ export const categories: { id: Category; label: string }[] = [
   { id: "security", label: "Security studio" },
 ];
 
+export type ProjectParagraph = string | {
+  before: string;
+  link: { label: string; href: string };
+  after: string;
+};
+
 export type Project = {
   slug: string
   title: string
@@ -26,7 +32,7 @@ export type Project = {
   images: { src: string; alt: string }[]
   live?: string
   repo?: string
-  intro: string[]
+  intro: ProjectParagraph[]
   method: string[]
   demo: string[]
   conclusion: string[]
@@ -52,7 +58,14 @@ export const projects: Project[] = [
       { src: "/projects/glove-poster.png", alt: "Research poster for the haptic glove project" },
     ],
     intro: [
-      "Undergraduate thesis at De La Salle University (ESCA-1-2324-C2, AY 2023–24) with Patricia Guerrero, advised by Dr. Alexander Co Abad: Development of a Wearable Haptic Glove for Augmented Reality-Enhanced Escape Rooms.",
+      {
+        before: "Undergraduate thesis at De La Salle University (ESCA-1-2324-C2, AY 2023–24) with Patricia Guerrero, advised by ",
+        link: {
+          label: "Dr. Alexander Co Abad",
+          href: "https://scholar.google.com.ph/citations?hl=en&user=yi8UfkEAAAAJ",
+        },
+        after: ": Development of a Wearable Haptic Glove for Augmented Reality-Enhanced Escape Rooms.",
+      },
       "The problem is blunt. A room-scale AR prop has a collider and a mesh, and nothing for the skin. We wanted force, a pin-array, vibration, and heat or cold on the hands, timed to an escape-room beat, while Apple Vision Pro did the tracking.",
     ],
     method: [

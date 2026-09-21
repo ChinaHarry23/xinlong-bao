@@ -1,27 +1,20 @@
 import type { Metadata } from "next";
-import { Cormorant_Garamond, Figtree, IBM_Plex_Mono } from "next/font/google";
+import { Inter, IBM_Plex_Mono } from "next/font/google";
 import { Analytics } from "@vercel/analytics/next";
 import { SpeedInsights } from "@vercel/speed-insights/next";
 import { SiteHeader } from "@/components/SiteHeader";
 import { SiteFooter } from "@/components/SiteFooter";
 import "./globals.css";
 
-const display = Cormorant_Garamond({
+const sans = Inter({
   subsets: ["latin"],
-  weight: ["500", "600"],
-  variable: "--font-display",
-  style: ["normal", "italic"],
-});
-
-const sans = Figtree({
-  subsets: ["latin"],
-  variable: "--font-sans",
+  variable: "--font-inter",
 });
 
 const mono = IBM_Plex_Mono({
   subsets: ["latin"],
   weight: ["400", "500"],
-  variable: "--font-mono",
+  variable: "--font-plex",
 });
 
 export const metadata: Metadata = {
@@ -30,7 +23,7 @@ export const metadata: Metadata = {
     template: "%s — Xinlong Bao",
   },
   description:
-    "Xinlong Bao — Harry, 包新龙. Master of Computer Science at Sydney. AWP on FACEIT. Vision Pro, gloves, and the other CS.",
+    "Xinlong Bao — Harry, 包新龙. Computer science at Sydney. Projects in wearable haptics, spatial computing, AI, and software.",
   icons: { icon: "/favicon.svg" },
 };
 
@@ -40,8 +33,9 @@ export default function RootLayout({
   children: React.ReactNode;
 }) {
   return (
-    <html lang="en" className={`${display.variable} ${sans.variable} ${mono.variable}`}>
+    <html lang="en" data-scroll-behavior="smooth" className={`${sans.variable} ${mono.variable}`}>
       <body className="min-h-screen antialiased">
+        <a href="#main-content" className="skip-link">Skip to content</a>
         <SiteHeader />
         {children}
         <SiteFooter />

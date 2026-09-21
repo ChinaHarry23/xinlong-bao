@@ -1,78 +1,28 @@
 "use client";
 
 import { useMemo, useState } from "react";
-import Link from "next/link";
 import { categories, type Category, projects } from "@/lib/projects";
-
-function pad(n: number) {
-  return String(n).padStart(2, "0");
-}
+import { ProjectCard } from "@/components/ProjectCard";
 
 export default function WorkPage() {
   const [filter, setFilter] = useState<Category | "all">("all");
-  const list = useMemo(
-    () => (filter === "all" ? projects : projects.filter((p) => p.category === filter)),
-    [filter],
-  );
-
+  const list = useMemo(() => filter === "all" ? projects : projects.filter((p) => p.category === filter), [filter]);
   return (
-    <main className="mx-auto max-w-6xl px-5 py-16 sm:px-8">
-      <p className="cat cat-spatial">Inventory</p>
-      <h1 className="font-display mt-3 text-5xl tracking-tight">Work</h1>
-      <p className="mt-4 max-w-xl text-paper-dim">
-        One entry per finished loop. Duplicate checkouts, engine templates, and
-        private lab notes stay off this list.
-      </p>
-
-      <div className="mt-10 flex flex-wrap gap-2">
-        <button
-          type="button"
-          onClick={() => setFilter("all")}
-          className={`border px-3 py-1 text-xs tracking-wide ${
-            filter === "all" ? "border-paper bg-paper text-bg" : "border-line text-paper-dim"
-          }`}
-        >
-          All
-        </button>
-        {categories.map((c) => (
-          <button
-            key={c.id}
-            type="button"
-            onClick={() => setFilter(c.id)}
-            className={`border px-3 py-1 text-xs tracking-wide ${
-              filter === c.id ? "border-paper bg-paper text-bg" : "border-line text-paper-dim"
-            }`}
-          >
-            {c.label}
-          </button>
+    <main id="main-content" className="site-container page-content">
+      <div className="page-heading"><p className="eyebrow">The project collection</p>
+        <h1 className="page-title">Driven by<br />curiosity.</h1>
+        <p>Wearable hardware, software, games, and research. Explore the builds, the process, and what I learned along the way.</p>
+      </div>
+      <div className="filter-bar" role="group" aria-label="Filter projects by category">
+        {[{ id: "all", label: "All work" }, ...categories].map((category) => (
+          <button key={category.id} type="button" onClick={() => setFilter(category.id as Category | "all")}
+            aria-pressed={filter === category.id} className="filter-tab">{category.label}</button>
         ))}
       </div>
-
-      <ul className="mt-12 grid gap-10 sm:grid-cols-2">
-        {list.map((p, i) => (
-          <li key={p.slug}>
-            <Link href={`/work/${p.slug}`} className="group block">
-              <div className="frame aspect-[16/10]">
-                {p.images[0] ? (
-                  <img src={p.images[0].src} alt={p.images[0].alt} />
-                ) : (
-                  <div className="flex h-full flex-col justify-between p-5">
-                    <span className="num">{pad(i + 1)}</span>
-                    <span className="font-display text-3xl leading-tight text-paper-dim">
-                      {p.title}
-                    </span>
-                  </div>
-                )}
-              </div>
-              <p className="cat mt-3">
-                {p.category} · {p.year}
-              </p>
-              <h2 className="font-display mt-1 text-2xl group-hover:text-copper">{p.title}</h2>
-              <p className="mt-1 text-sm leading-relaxed text-paper-dim">{p.lede}</p>
-            </Link>
-          </li>
-        ))}
-      </ul>
+      <p className="results-count" role="status">{String(list.length).padStart(2, "0")} projects / {filter === "all" ? "Full collection" : categories.find((c) => c.id === filter)?.label}</p>
+      <ul className="project-grid work-grid">{list.map((project) => (
+        <li key={project.slug}><ProjectCard project={project} index={projects.indexOf(project)} /></li>
+      ))}</ul>
     </main>
   );
 }
